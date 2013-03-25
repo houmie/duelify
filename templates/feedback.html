@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% load i18n %}
+{% block content %}
+<div class="row-fluid">
+	<div class="well well-small well-auto">
+		<form id="feedback_form" method="post" action=".">		
+			{% csrf_token %}
+			<div>
+				{% if form.feedback.required %}<label for="{{ form_field.auto_id }}" class="cb_inline_block" rel="tooltip" title="Required Field">{{form.feedback.label}}: *</label>{%else%}<label for="{{ form.feedback.auto_id }}">{{form.feedback.label}}:</label>{% endif %}
+			</div>			
+			{{form.feedback}}
+			<div class="row field field_error">
+				<div class="cb-float-to-right">
+					{{form.feedback.errors}}
+				</div>
+			</div>			 
+			<button type="submit" id="feedback_btn" autocomplete="off" class="btn btn-primary btn-large cb-float-to-left">{% trans 'Send Feedback' %}</button>
+			<a id="feedback_cancel_btn" href="/" class="btn btn-large cb-float-to-left">{% trans 'Cancel' %}</a>
+		</form>
+	</div>
+</div>
+{% endblock %}

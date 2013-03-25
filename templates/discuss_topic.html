@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% load i18n %}
+{% load get_votes_for_punch %}
+{% block content %}
+<ul class="breadcrumb">
+	<li><a id="back2contacts" href="/">{% trans 'Home' %}</a> <span class="divider">></span></li>
+	<li class="active">{{template_title}}</li>	    	
+</ul>
+
+<div class="row-fluid">    
+		<div class="parent">	    	
+			<div>	
+				<h2>{{ring.topic}}</h2>
+				<h5>{% trans 'Category:' %} {{ring.category}}</h5>
+				<h4>{{winner_sofar}} <span class="well-{{winner_color}}">{{winner}}</span></h4>				
+				{% for punch in punches %}
+					<div class="row">
+						{% if punch.speaker = 'red' %}						
+							<div class="block_inline cb-float-to-left">
+								{{ring.red.get_full_name}}
+								<div class="well well-red well-large">
+									<p>{{punch.discussion}}</p>
+								</div>
+							</div>
+							{% if not punch_form %}
+								<div class="block_inline cb-float-to-left">
+									<a class="btn {% get_votes_for_punch punch user %}" href="/vote-up/discussion/{{punch.pk}}"><i class="icon-thumbs-up icon-large"/></i></a>
+									<!-- <a class="btn {% if is_vote_down_active %}btn-success{%endif%}{% if is_vote_up_active %}disabled{%endif%}" href="/vote-down/discussion/{{punch.pk}}"><i class="icon-thumbs-down icon-large"></i></a> -->
+									{% trans 'Votes' %}: {{punch.get_votes}}
+								</div>
+							{% endif %}
+						{% endif %}
+	
+						{% if punch.speaker = 'blue' %}
+							<div class="block_inline cb-float-to-right">
+								{{ring.blue.get_full_name}}
+								<div class="well well-blue well-large">
+									<p>{{punch.discussion}}</p>
+								</div>
+							</div>
+							{% if not punch_form %}
+								<div class="block_inline cb-float-to-right">
+									<a class="btn {% get_votes_for_punch punch user %}" href="/vote-up/discussion/{{punch.pk}}"><i class="icon-thumbs-up icon-large"/></i></a>
+									<!-- <a class="btn {% if is_vote_down_active %}btn-success{%endif%}{% if is_vote_up_active %}disabled{%endif%}" href="/vote-down/discussion/{{punch.pk}}"><i class="icon-thumbs-down icon-large"></i></a> -->
+									{% trans 'Votes' %}: {{punch.get_votes}}
+								</div>
+							{% endif %}
+						{% endif %}
+					</div>
+				{% endfor %}
+				{% if punch_form %}					
+					<form class="{% if punch.speaker = 'blue' %}cb-float-to-right{% else %}cb-float-to-left{% endif %}"  id="save_add_form" method="post" action=".">
+						{% csrf_token %}
+						{% show_row_div_below_error punch_form.discussion  %}		
+						<a id="contact_cancel_btn" href="/" class="btn btn-large cb-float-to-right">{% trans 'Cancel' %}</a> 
+						<button type="submit" id="add_topic" autocomplete="off" class="btn btn-primary btn-large cb-float-to-right">{% trans 'Add Your Opinion' %}</button>
+					</form> 		
+				{% endif %}	   			
+			</div>
+		</div>       
+    	            
+</div>
+
+{% endblock %}

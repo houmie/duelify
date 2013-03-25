@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% load i18n %}
+{% block content %}
+<ul class="breadcrumb">
+	<li><a id="back2contacts" href="/">{% trans 'Home' %}</a> <span class="divider">></span></li>
+	<li class="active">{% trans 'Search for Topics' %}</li>	    	
+</ul>
+
+<div class="row-fluid">
+    <form id="save_add_form" method="post" action=".">
+		{% csrf_token %}
+		<div class="parent">	    	
+			<div class="well well-large">	
+				{% show_row_div_below_error form.category|attr:"class:big-input"  %}														
+				<a id="contact_cancel_btn" href="/" class="btn btn-large cb-float-to-right">{% trans 'Back' %}</a> 
+				<button type="submit" id="add_topic" autocomplete="off" class="btn btn-primary btn-large cb-float-to-right">{% trans 'Filter' %}</button>			   			
+			</div>
+		</div>    
+	</form>                   
+</div>
+<div class="row-fluid">
+  	{% for ring in rings %}
+        <div class="span4">
+          <h2>{{ring.topic}}</h2>
+          <p>{% trans 'Category' %}: {{ring.category}}</p>
+          {% if ring.punch_set.all %}
+          	<p>{{ ring.punch_set.all.0.discussion|slice:":100" }}...</p>
+          {% endif %}          
+          <p><a class="btn" href="#">{% trans 'View &amp; Vote &raquo; ' %}</a></p>
+        </div><!--/span-->      
+    {% endfor %}      
+</div><!--/row-->
+{% include '_paginator.html' %}
+
+{% endblock %}

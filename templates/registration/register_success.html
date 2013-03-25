@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block external %}<meta http-equiv="refresh" content="5;url=/">{% endblock %}
+{% block title %}{% trans 'Registration Successful' %}{% endblock %}
+{% block head %}{% trans 'Registration Completed Successfully' %}{% endblock %}
+{% block content %}
+<div class="well well large">
+	<h3>
+		{% trans 'Thank you for signing up.'  %}
+	</h3>
+	<h4>{% trans 'You will be redirected to the login page in 5 seconds...' %}</h4>
+</div>
+{% endblock %}

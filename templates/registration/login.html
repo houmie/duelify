@@ -1,0 +1,33 @@
+{% load widget_tweaks %}
+{% load i18n %}
+<div class="row-fluid">
+    <div class="span3">    	
+		<form id="form_login" class="cb_margin_top" method="post" action="/login/">
+			<div class="parent">	    	
+				<div>	
+					{% show_row_div_below_error form.username|attr:"class:login-input"  %}					
+					{% show_row_div_below_error form.password|attr:"class:login-input"  %}	
+					<input type="hidden" name="next" value="/" />					
+	    			<button id="login-button" type="submit" autocomplete="off" class="btn btn-primary btn-large cb-float-to-right">{% trans 'Log in' %}</button>	    			    			
+				</div>
+				<div class="cb-float-to-right sidebar_width">
+					<a class="btn_link cb-float-to-right" href="/password_reset/">{% trans 'Forgot password?' %}</a>				
+					<a class="btn_link cb-float-to-right" href="/register/">{% trans 'Sign up' %}</a>
+				</div>
+			</div>			    
+    		{% csrf_token %}
+    		{% if form.errors %}	
+				{% for key, err in form.errors.items %}
+					{% if key == 'username' or key == 'password' %}
+					{% else %}
+						<div class="field field_error">{{err}}</div>
+					{% endif%}
+				{% endfor %}
+			{% endif %}
+		</form>
+	</div>
+</div>
+
+
+
+

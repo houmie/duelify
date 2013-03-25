@@ -1,0 +1,19 @@
+Welcome to Duelify,
+
+
+Hello {{first_name}},
+
+
+In order to login you need to enter use your email address: {{email}}.
+
+If you have forgotten your password, you may reset it here:
+http://duelify.com/password_reset/
+
+If you would like to login, please follow this link:
+http://duelify.com/
+
+
+
+
+Kind Regards,
+-- Duelify.com

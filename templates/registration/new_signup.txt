@@ -1,0 +1,10 @@
+New User signup,
+
+
+username: 	{{username}}
+country:	{{country}} 
+city:		{{city}}
+browser:	{{browser}}
+
+
+-- Duelify.com

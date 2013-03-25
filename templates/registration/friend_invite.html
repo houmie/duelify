@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans 'Invite Your Colleagues' %}{% endblock %}
+{% block head %}{% trans 'Invite Your Colleagues' %}{% endblock %}
+{% block content %}
+<ul class="breadcrumb">
+	<li><a href="/">{% trans 'Home' %}</a> <span class="divider">></span></li>
+	<li class="active">{% trans 'Invite'%}</li>	    	
+</ul>
+<table class="table cb_invite_table cb_invite_table2">
+	<caption><strong>{% trans 'Your company is currently using the following license:' %}</strong></caption>
+	<thead>
+		<tr>
+			<th>
+				{% trans 'License Type' %}
+			</th>
+			<th>
+				{% trans 'License Description' %}				
+			</th>		
+			<th>
+				{% trans 'Maximum Users' %}				
+			</th>
+			<th>
+				{% trans 'Currency' %}
+			</th>
+			<th>
+				{% trans 'Price' %}
+			</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>
+				{{license.name}}
+			</td>
+			<td>
+				{{license.description}}
+			</td>		
+			<td>
+				{{license.max_users}}
+			</td>
+			<td>
+				{{license.currency}}
+			</td>
+			<td>
+				{{license.price}}
+			</td>
+		</tr>
+	</tbody>	
+</table>
+
+<table class="table cb_invite_table2 table-striped">
+	<caption><strong>{% trans 'The following users in your company are currently registered with Chasebot:' %}</strong></caption>
+	<thead>
+		<tr>			
+			<th>{% trans 'Username' %}</th>
+			<th>{% trans 'Email' %}</th>
+			<th>{% trans 'Superuser' %}</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for up in user_profiles %}
+		<tr>			
+			<td>{{up.user.username}}</td>
+			<td>{{up.user.email}}</td>
+			<td>{% if up.is_cb_superuser %}{% trans 'Yes' %}{% else %}{% trans 'No' %}{% endif %}</td>
+		</tr>
+		{% endfor %}
+	</tbody>
+	
+</table>
+
+<div class="alert alert-info cb_invite_table3">
+	{{template_announcement_1}}
+</div>
+
+<div class="cb_invite_table4">
+<p>
+{% blocktrans %}Enter your colleague's name and email below to join your account.{% endblocktrans %}
+</p>
+
+<form id="form_invite" method="post" action=".">
+	{% csrf_token %}
+	<table class="table no_border_table table-condensed">
+		<tr>
+			<td>
+				{{ form.name.label }}:    			
+			</td>
+			<td>
+				{% if form.name.errors %}
+					<div class="field field_error cb_inline">
+						{{ form.name }}	{{ form.name.errors }}	
+					</div>
+				{% else %}
+					{{form.name}}
+				{% endif %}
+			</td>
+		</tr>
+		<tr>
+			<td>
+				{{ form.email.label }}:
+			</td>
+			<td>
+				{% if form.email.errors %}
+				<div class="field field_error cb_inline">
+			    	{{form.email}} {{form.email.errors}}                   	
+				</div>
+				{% else %}
+					{{form.email}}
+				{% endif %}    			
+			</td>
+		</tr>
+	</table> 
+    
+  <a id="invite-button" autocomplete="off" class="btn btn-primary btn-large">{% trans 'Send Invite' %}</a>
+</form>
+</div>
+{% endblock %}

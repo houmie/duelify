@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block content %}
+<div class="row-fluid">
+  	{% for category in categories %}
+        <div class="span4">
+          <h2>{{category.category}}</h2>
+          
+          <p><a class="btn" href="#">{% trans 'View &amp; Vote &raquo; ' %}</a></p>
+        </div><!--/span-->    
+    {% endfor %}        
+</div><!--/row-->
+{% endblock %}

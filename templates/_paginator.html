@@ -1,0 +1,24 @@
+{% load i18n %}
+{% if show_paginator %}
+	<tr id="paginator_tr">
+		<td colspan="11">
+			<div class="pager cb_pager">
+			    <ul>		      
+			      	{% if has_prev%}
+			      	<li>
+			        	<a class="paginator_nav_links" href="{{source}}?page={{ prev_page }}">&laquo; {% trans 'Previous' %}</a>
+			        </li>
+			      	{% endif %}		      
+		          	{% if has_next %}
+		          	<li>
+		          		<a class="paginator_nav_links" href="{{source}}?page={{ next_page }}">{% trans 'Next' %} &raquo;</a>
+		          	</li>
+			      	{% endif %}		      		      
+			    </ul>
+			    <div>
+		    		{% blocktrans with p=page ps=pages%}Page {{ p }} of {{ ps }}{% endblocktrans %}
+		    	</div>
+		   	</div>
+   	  	</td>
+	</tr>		    
+{% endif %}

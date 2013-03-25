@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load widget_tweaks %}
+{% block content %}
+<div class="row-fluid">
+    <div class="span6 offset3">    	
+		<form id="form_registration" class="cb_margin_top" method="post" action=".">
+			<div class="parent">	    	
+				<div class="well well-large">
+					{% show_row_div_below_error form.first_name %}
+					{% show_row_div_below_error form.last_name %}	
+					{% show_row_div_below_error form.date_of_birth|attr:"class:date_picker" %}					
+					{% show_row_div_below_error form.email %}
+					{% show_row_div_below_error form.password1 %}
+					{% show_row_div_below_error form.password2 %}					
+						
+	    			<button id="registration-button" autocomplete="off" type="submit" class="btn btn-primary btn-large cb-float-to-right">{% trans 'Sign Up' %}</button>    			
+				</div>
+			</div>    
+    		{% csrf_token %}
+		</form>
+	</div>
+</div>
+
+{% endblock %}

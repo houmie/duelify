@@ -1,0 +1,122 @@
+.mainfooter {
+    background-color: #F5F5F5;
+    border-top: 1px solid #E5E5E5;
+    margin-top: 70px;
+    padding: 30px 0;
+    text-align: center;
+}
+
+.cb-float-to-right{
+	float:right;
+	margin-right: 10px;
+}
+
+.cb-float-to-left{
+	float:left;
+	margin-left: 10px;
+}
+
+input.login-input{
+	padding: 10px;	
+    position: relative;
+    left: -10px;
+}
+
+textarea.discussion{
+	width: 35em;
+}
+
+input.big-input{
+	padding: 10px;	
+    position: relative;
+    left: -10px;
+    width: 20em;
+}
+
+input.reset-input{
+	padding: 10px;	
+    position: relative;
+    left: -20px;
+}
+
+input.reset2-input{
+	padding: 10px;	
+    position: relative;
+    left: 2.5em;
+}
+
+.btn-success2, .btn-success2:hover {
+    color: #333333;
+    text-shadow: none;
+}
+
+.cb_inline_block {
+	display:inline-block;
+}
+
+.block_inline{
+    display: table-cell;
+    width: 50%;
+    display:inline-block;
+}
+
+.row {
+    display: table-row;
+}
+
+.well {
+  	background-color: #dcf4de; 
+}
+
+.well-grey{
+	background-color: #f5f5f5;
+	width: 95%;
+}
+
+.well-red{
+	background-color: #dc8787;
+	width: 95%;
+}
+
+.well-blue{
+	background-color: #87b3dc;
+	width: 95%;
+}
+
+.well-tiny {
+  padding: 0; 
+}
+
+.parent{
+	display: table;
+}
+
+input {
+	width: auto;
+}
+
+.sidebar_width {
+	width: 9em;
+}
+
+.padding_by_10{
+	padding: 10px;
+}
+
+.margin_to_left{
+	margin-left: 10px;
+}
+
+div.field_error input[type=text], div.field_error input[type=password], div.field_error select, li.field_error{
+	color: red;
+	border: 2px solid #FF0000;	 
+}
+
+div.field_error ul{
+	font-size: 14px;
+}
+
+
+div.field_error li, div.field_error p, div.field_error{
+	color: red;
+}

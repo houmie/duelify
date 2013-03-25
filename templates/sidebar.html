@@ -1,0 +1,11 @@
+{% load i18n %}
+{% load get_score_for_user %}
+<li class="nav-header">{% trans 'Your Discussions' %}</li>
+{% for ring in rings %}  
+  <li class="active1"><a href="/topics/discuss/{{ring.pk}}">{{ring}}</a></li>
+{% endfor %}
+  
+  <li class="nav-header">{% trans 'Your Score' %}</li>
+  <li><a href="#">{% get_score_for_user user %}</a></li>
+  <li class="nav-header">{% trans 'Your Medals' %}</li>
+  <li><a href="#">Coming soon...</a></li>

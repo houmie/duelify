@@ -1,0 +1,9 @@
+Hello,
+
+{{sender}} has challengend you to a dicussion about {{topic}}.  
+
+Can you beat him in this topic? Then click the link below and show it to everyone:
+{{ link }}
+
+
+-- Duelify.com
