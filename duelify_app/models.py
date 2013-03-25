@@ -82,7 +82,7 @@ class DuelInvitation(models.Model):
 
     def send(self):
         subject = _(u'Invitation to a Duel')
-        link = 'http://%s/duel/accept/%s/' % (settings.SITE_HOST, self.code)
+        link = '%s/duel/accept/%s/' % (settings.SITE_HOST, self.code)
         template = get_template('registration/invitation_email.txt')
         context = Context({'link': link, 'sender': self.sender.get_full_name(), 'topic':self.ring.topic})
         message = template.render(context)
