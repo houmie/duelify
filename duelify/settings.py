@@ -182,7 +182,8 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'widget_tweaks',
     'pipeline',
-    'duelify_app',
+    'south',
+    'duelify_app',    
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
