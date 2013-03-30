@@ -8,8 +8,8 @@ from duelify_app.models import Ring, DuelInvitation, Punch, Category
 from django.contrib.auth.decorators import login_required
 from django.core.context_processors import request
 from django.http.response import HttpResponseRedirect, Http404
-from django.contrib.auth import logout, authenticate, get_user_model
-from django.contrib.auth.views import login
+from django.contrib.auth import logout, authenticate, get_user_model, login
+from django.contrib.auth.views import login as loginview
 from duelify import settings
 from django.contrib.auth.models import User
 from django.shortcuts import render, get_object_or_404
@@ -50,7 +50,7 @@ def custom_login(request):
     if request.user.is_authenticated():
         return HttpResponseRedirect('/')
     else:
-        return login(request)
+        return loginview(request)
 
 @login_required
 def logout_page(request):
@@ -94,7 +94,7 @@ def register_page(request):
                 handle_invitation(request, invitation, user)                
             
                 
-            user = authenticate(username=form.cleaned_data['email'], password=form.cleaned_data['password2'])
+            user = authenticate(username=form.cleaned_data['email'], password=form.cleaned_data['password2'])            
             login(request, user)
 
             template = get_template('registration/welcome.txt')
