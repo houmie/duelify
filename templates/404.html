@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block external %}<meta http-equiv="refresh" content="10;url=/">{% endblock %}
+{% block title %}{% trans 'Page not found' %}{% endblock %}
+
+{% block content %}
+<h3>{% trans 'Page not found' %}</h3>
+
+<h4>{% trans 'Sorry, but the requested page could not be found.' %}</h4>
+{% endblock %}

@@ -1,0 +1,5 @@
+{% load i18n %}
+{% load get_score_for_user %}
+<li class="nav-header">{% trans 'Top Ten Contributers' %}</li>
+<li><a href="#">{% get_score_for_user user %}</a></li>
+

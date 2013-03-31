@@ -24,10 +24,19 @@ input.login-input{
 
 textarea.discussion{
 	width: 35em;
+    position: relative;
+    left: -10px;
+    
 }
 
 input.big-input{
 	padding: 10px;	
+    position: relative;
+    left: -10px;
+    width: 20em;
+}
+
+select.big-input{	
     position: relative;
     left: -10px;
     width: 20em;
@@ -117,6 +126,10 @@ div.field_error ul{
 }
 
 
-div.field_error li, div.field_error p, div.field_error{
+div.field_error li, div.field_error p, div.field_error, ul.errorlist li{
 	color: red;
+}
+
+.all_error_block {
+	width: 17em;
 }

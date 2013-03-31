@@ -319,10 +319,53 @@ if (!String.prototype.trim) {
     // $(menu_id).addClass('active');
 // }
 
+function hide_form_errors() {
+    "use strict";
+    $('.errorlist').remove();
+}
+
+function process_form_errors(json, form) {
+    "use strict";
+    hide_form_errors();
+    //form.clearForm();
+    var errors, prefix, field;
+    errors = json.errors;
+
+    /*jslint nomen: true*/
+    if (errors.__all__ !== undefined) {
+        $('#all_error').append(errors.__all__);
+    }
+    /*jslint nomen: false*/
+
+    prefix = form.find(":hidden[name='prefix']").val();
+
+    prefix = ((prefix === undefined) ? '' : prefix + '-');
+    for (field in errors) {
+        if (errors.hasOwnProperty(field)) {
+            $('#id_' + prefix + field).after(errors[field]);
+        }
+    }
+}
+
 
 function login(id) {
     "use strict";
-    $(id).load('/login/');
+    $(id).load('/side_login/', function () {
+        jQuery(function ($) {
+            var login_form = $('#form_login');
+            login_form.ajaxForm({
+                url : this.action,
+                dataType : 'json',
+                success : function (json) {
+                    if (json.errors !== undefined) {
+                        process_form_errors(json, login_form);
+                    } else {
+                        window.location.replace(json.redirect_to);
+                    }
+                }
+            });
+        });
+    });
 }
 
 
@@ -347,6 +390,16 @@ function datepicker_reload(source, isPast) {
     //}
 }
 
+// function discuss_btn_clicked(event) {
+    // "use strict";
+    // event.preventDefault();
+    // var url;
+    // url = $(event.currentTarget).attrs('href');
+    // if ($.cookie('sessionid') === null) {
+        // var test = 1;
+    // }
+// }
+
 $(document).ready(function () {
     "use strict";
     // spinning_btn('#registration-button', '#form_registration');
@@ -357,5 +410,5 @@ $(document).ready(function () {
     // $('#invite_menu').on('click').off('click', {menu_id: '#invite_menu'}, activate_menu);
     // $('#home_menu').on('click').off('click', {menu_id: '#home_menu'}, activate_menu);
     login('#login');
-
+    //$('.discuss_btn').off('click').on('click', discuss_btn_clicked);
 });

@@ -8,6 +8,33 @@ from django.utils import timezone
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from duelify_app.admin import UserCreationForm
+from django.template.defaultfilters import striptags
+from django.contrib.auth.forms import AuthenticationForm
+
+
+class AjaxBaseForm(forms.BaseForm):
+    def errors_as_json(self, strip_tags=False):
+        error_summary = {}
+        errors = {}
+        for error in self.errors.iteritems():
+            errors.update({error[0] : unicode(striptags(error[1]) \
+                if strip_tags else error[1])})
+        error_summary.update({'errors' : errors })
+        return error_summary
+
+
+class AjaxModelForm(AjaxBaseForm, forms.ModelForm):
+    """Ajax Form class for ModelForms"""
+    pass
+
+
+class AjaxForm(AjaxBaseForm, forms.Form):
+    """Ajax Form class for Forms"""
+    pass
+
+class AjaxLoginForm(AjaxBaseForm, AuthenticationForm):
+    pass
+    
 
 class FeedbackForm(Form):
     feedback        = forms.CharField(widget=forms.Textarea(attrs={'class': 'textarea_mandatory', 'placeholder': _(u"We will improve Duelify upon your feedback. :-)")}))
@@ -19,6 +46,7 @@ class ChooseCategoryForm(Form):
         self.fields['category'].queryset = Category.objects.all()
         self.fields['category'].required = False 
     category = forms.ModelChoiceField(queryset='', label=_(u'Pick a category'))
+    show_open_topics = forms.BooleanField(label=_(u'Show Only Open Topics'), required=False)
 
 class CategoryForm(forms.ModelForm):
     class Meta:        
@@ -29,22 +57,25 @@ class RingForm(forms.ModelForm):
         super(RingForm, self).__init__(*args, **kwargs)        
         if self.instance.blue:
             self.fields['blue_invite'].initial = self.instance.blue
-    blue_invite     = forms.EmailField(label=_(u'Your Opposition'), widget= forms.TextInput(attrs={'placeholder': _(u'Invite your friend or foe...'), 'class': 'placeholder_fix_css', 'autocomplete': 'off'}))
+        self.fields['category'].widget.attrs['class'] = 'big-input'
+        self.fields['blue_invite'].required = False
+            
+    blue_invite     = forms.EmailField(label=_(u'Email of your opponent - OR - Leave empty as open topic'), widget= forms.TextInput(attrs={'placeholder': _(u'Invite your friend or foe'), 'class': 'placeholder_fix_css big-input', 'autocomplete': 'off'}))
     
     class Meta:
         exclude = {'datetime'}
         model = Ring
         widgets = {
-                'topic': forms.TextInput(  attrs={'placeholder': _(u'Enter the topic for discussion'), 'class': 'placeholder_fix_css', 'autocomplete': 'off'}),
+                'topic': forms.TextInput(  attrs={'placeholder': _(u'Enter the topic for discussion'), 'class': 'placeholder_fix_css big-input', 'autocomplete': 'off'}),                
              }
         
 class PunchForm(forms.ModelForm):
     def __init__(self, is_edit, *args, **kwargs):
         super(PunchForm, self).__init__(*args, **kwargs)
         if is_edit:
-            self.fields['discussion'].widget.attrs['placeholder'] = _(u'Continue the discussion according to your topic')
+            self.fields['discussion'].widget.attrs['placeholder'] = _(u'Continue the discussion according to given topic')
         else:        
-            self.fields['discussion'].widget.attrs['placeholder'] = _(u'Start the discussion according to your topic')
+            self.fields['discussion'].widget.attrs['placeholder'] = _(u'Start the discussion according to given topic')
     class Meta:
         exclude = {'speaker', 'ring', 'datetime', 'voters'}
         model = Punch
@@ -95,6 +126,14 @@ class RegistrationForm(UserCreationForm):
         is_accept_invite = kwargs.pop('is_accept_invite', None)
         super(RegistrationForm, self).__init__(*args, **kwargs)
         self.fields['email'].label = _(u'Email')        
+        self.fields['date_of_birth'].widget.attrs['placeholder'] = _(u'To adjust age restricted content')
+        self.fields['password2'].widget.attrs['placeholder'] = _(u'Type in the same password again')
+        self.fields['date_of_birth'].widget.attrs['class'] = 'date_picker big-input'
+        self.fields['email'].widget.attrs['class'] = 'big-input'
+        self.fields['password1'].widget.attrs['class'] = 'big-input'
+        self.fields['password2'].widget.attrs['class'] = 'big-input'
+        self.fields['first_name'].widget.attrs['class'] = 'big-input'
+        self.fields['last_name'].widget.attrs['class'] = 'big-input'
         if is_accept_invite:            
             self.fields['email'].initial = email
             self.fields['email'].widget.attrs['readonly'] = True

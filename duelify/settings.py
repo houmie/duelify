@@ -1,7 +1,7 @@
 # Django settings for duelify project.
 
 LOGIN_URL = '/login/'
-
+LOGIN_REDIRECT_URL = '/'
 AUTH_USER_MODEL = 'duelify_app.User'
 
 SITE_HOST = '127.0.0.1:8000'
@@ -37,8 +37,8 @@ DATABASES = {
 PIPELINE_YUGLIFY_BINARY = '/home/hooman/venuscloud/duelify-env/node_modules/yuglify/bin/yuglify'
 PIPELINE_CLOSURE_BINARY = '/home/hooman/venuscloud/duelify-env/bin/closure'
 STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
-#PIPELINE_JS_COMPRESSOR = 'pipeline.compressors.closure.ClosureCompressor'
-PIPELINE_JS_COMPRESSOR = 'pipeline.compressors.yuglify.YuglifyCompressor'
+PIPELINE_JS_COMPRESSOR = 'pipeline.compressors.closure.ClosureCompressor'
+#PIPELINE_JS_COMPRESSOR = 'pipeline.compressors.yuglify.YuglifyCompressor'
 PIPELINE_CSS_COMPRESSOR = 'pipeline.compressors.yuglify.YuglifyCompressor'
 
 PIPELINE_CSS = {
@@ -68,13 +68,19 @@ PIPELINE_JS = {
           'bootstrap-datepicker/js/bootstrap-datepicker.js',
         ),
         'output_filename': 'bootstrap-datepicker/js/bootstrap-datepicker.min.js',
-    },   
+    },
+    'ajaxform_js': {
+        'source_filenames': (
+          'ajaxform/jquery.form.js',
+        ),
+        'output_filename': 'ajaxform/jquery.form.min.js',
+    },
 }
 
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.4/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = ['duelify.com', 'www.duelify.com']
+ALLOWED_HOSTS = ['duelify.com', 'www.duelify.com', '54.225.168.25']
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name

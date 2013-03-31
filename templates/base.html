@@ -49,7 +49,7 @@
    	{% block external %}{% endblock %}
   </head>
 
-  <body>
+  <body id="body">
 
     <div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
@@ -87,14 +87,15 @@
         <div class="span3">
           <div class="well sidebar-nav">
             <ul class="nav nav-list">
-            	{% if user.is_authenticated %}
-        			  {% include 'sidebar.html' %}
-            	{% else %}
-            	<div id="login">
-                </div>    	
-            	{% endif %}
-            	
-              
+            	{% block sidebar %}		
+	            	{% if user.is_authenticated %}
+	        			  {% include 'sidebar.html' %}
+	            	{% else %}
+	            	<div id="login">
+	                </div>    	
+	            	{% endif %}
+            	{% endblock %}          
+            	{% include 'sidebar_top10.html %}    
             </ul>
           </div><!--/.well -->
         </div><!--/span-->
@@ -118,7 +119,9 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="{{ STATIC_URL }}jquery/jquery-1.9.1.min.js"></script>
-    <Script src="{{ STATIC_URL }}bootstrap/js/bootstrap.min.js"></Script> 
+    <Script src="{{ STATIC_URL }}bootstrap/js/bootstrap.min.js"></Script>
+    <!-- <Script src="{{ STATIC_URL }}jquery-cookie/jquery.cookie.js"></Script> -->
+    {% compressed_js 'ajaxform_js' %}
 	<script type="text/javascript" src="{% url 'django.views.i18n.javascript_catalog' %}"></script>
 	{% compressed_js 'bootstrap_datepicker_js' %}	
 	{% compressed_js 'duelify_js' %}   

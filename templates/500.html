@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block external %}<meta http-equiv="refresh" content="15;url=/">{% endblock %}
+{% block title %}{% trans 'Page unavailable' %}{% endblock %}
+
+{% block content %}
+<h3>{% trans 'Page unavailable' %}</h3>
+
+<h4>{% trans 'Sorry, but the requested page is unavailable due to a server hiccup.' %}</h4>
+<h5>{% trans 'Our engineers have been notified, so check back later.' %}</h5>
+{% endblock %}

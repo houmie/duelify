@@ -3,16 +3,16 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView,\
     FormView
 from django.views.generic import TemplateView
 from duelify_app.forms import RingForm, RegistrationForm, PunchForm,\
-    CategoryForm, ChooseCategoryForm, FeedbackForm
+    CategoryForm, ChooseCategoryForm, FeedbackForm, AjaxLoginForm
 from duelify_app.models import Ring, DuelInvitation, Punch, Category
 from django.contrib.auth.decorators import login_required
 from django.core.context_processors import request
-from django.http.response import HttpResponseRedirect, Http404
-from django.contrib.auth import logout, authenticate, get_user_model, login
+from django.http.response import HttpResponseRedirect, Http404, HttpResponse
+from django.contrib.auth import logout, authenticate, get_user_model, login, REDIRECT_FIELD_NAME
 from django.contrib.auth.views import login as loginview
 from duelify import settings
 from django.contrib.auth.models import User
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, resolve_url
 from django.contrib import messages
 from django.template.loader import get_template
 from django.template.context import Context
@@ -26,6 +26,13 @@ from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django import template
 from django.db.models.query_utils import Q
+from django.utils.http import is_safe_url
+from django.contrib.sites.models import get_current_site
+from django.views.decorators.debug import sensitive_post_parameters
+from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.cache import never_cache
+import json
+from django.template.response import TemplateResponse
 
 
 def handle_invitation(request, invitation, user):
@@ -46,7 +53,63 @@ def show_row_div_below_error(form_field, *args, **kwargs):
     return {'form_field': form_field }
 
 
-def custom_login(request):
+@sensitive_post_parameters()
+@csrf_protect
+@never_cache
+def Ajaxlogin(request, template_name='registration/login.html',
+          redirect_field_name=REDIRECT_FIELD_NAME,
+          authentication_form=AjaxLoginForm,
+          current_app=None, extra_context=None):
+    """
+    Displays the login form and handles the login action.
+    """
+    redirect_to = request.REQUEST.get(redirect_field_name, '')
+
+    if request.method == "POST":
+        form = authentication_form(data=request.POST)
+        if form.is_valid():
+            
+            # Ensure the user-originating redirection url is safe.
+            if not is_safe_url(url=redirect_to, host=request.get_host()):
+                redirect_to = resolve_url(settings.LOGIN_REDIRECT_URL)
+            
+            # Okay, security check complete. Log the user in.
+            login(request, form.get_user())
+
+            if request.session.test_cookie_worked():
+                request.session.delete_test_cookie()
+                
+            response = {'success' : True, 'redirect_to':redirect_to}
+        else:
+            response = form.errors_as_json()
+        return HttpResponse(json.dumps(response, ensure_ascii=False), mimetype='application/json')
+            
+    else:
+        form = authentication_form(request)
+
+    request.session.set_test_cookie()
+
+    current_site = get_current_site(request)
+
+    context = {
+        'form': form,
+        redirect_field_name: redirect_to,
+        'site': current_site,
+        'site_name': current_site.name,
+    }
+    if extra_context is not None:
+        context.update(extra_context)
+    return TemplateResponse(request, template_name, context, current_app=current_app)
+
+
+def side_login(request):
+    if request.user.is_authenticated():
+        return HttpResponseRedirect('/')
+    else:
+        return Ajaxlogin(request, template_name='registration/side_login.html')
+
+
+def main_login(request):
     if request.user.is_authenticated():
         return HttpResponseRedirect('/')
     else:
@@ -64,7 +127,7 @@ def register_page(request):
             if users.count() > 0:
                 user = users[0]
                 handle_invitation(request, invitation, user)
-                user.backend = 'django.contrib.auth.backends.ModelBackend'
+                #user.backend = 'django.contrib.auth.backends.ModelBackend'
                 login(request, user)
                 return HttpResponseRedirect(reverse_lazy('discuss-topic', args=str(invitation.ring.pk)))
     if request.user.is_authenticated():
@@ -204,54 +267,69 @@ def topics_discuss(request, ring_id):
     ring = get_object_or_404(Ring.objects.all(), pk=ring_id)
     punch = Punch(ring = ring)
     punches = ring.punch_set.order_by('datetime')
-    is_edit = False
+    is_continue = False
+    is_participate = False
     template_title = _(u'View & Vote') 
     punch_form = None
     if ring.red == request.user or ring.blue == request.user:
-        is_edit = True
-        template_title = _(u'Express your opinion') 
+        is_continue = True
+        template_title = _(u'Continue Discussion')
+    elif ring.red and not ring.blue:
+        is_participate = True
+        template_title = _(u'Open Topic')
+        ring.blue = request.user
+    
     if request.method == 'POST':  
-        punch_form_post = PunchForm(is_edit, request.POST)
+        punch_form_post = PunchForm(is_continue, request.POST)
         if punch_form_post.is_valid():
             punch = punch_form_post.save(commit=False)
             punch.ring = ring
             if ring.red == request.user:
                 punch.speaker = 'red'
-            if ring.blue == request.user:
-                punch.speaker = 'blue'
+            elif (ring.blue == request.user) or (ring.red and not ring.blue):
+                punch.speaker = 'blue'                
             punch.datetime = timezone.now()
             punch.save()   
+            ring.save()
             return HttpResponseRedirect(reverse_lazy('discuss-topic', args=str(punch.ring.pk)))
     else:
         #Is the user allowed to contribute to this topic?
-        if is_edit:
-            punch_form = PunchForm(is_edit, instance=punch)
+        if is_continue:
+            punch_form = PunchForm(is_continue, instance=punch)
+        if is_participate:
+            punch_form = PunchForm(False, instance=punch)
     
-#    Score    
-#    users = get_user_model().objects.filter(punch__voters=request.user)
-
     winner_sofar = _(u'Winner so far in this discussion:')
-    red_votes = blue_votes = 0        
-    for punch in ring.punch_set.all():
-        if punch.speaker == 'red':            
-            red_votes = red_votes + punch.get_votes()
-        else:            
-            blue_votes = blue_votes + punch.get_votes()
-    if blue_votes > red_votes:
-        winner_color = 'blue'
-        winner = ring.blue.get_full_name()
-    elif blue_votes < red_votes:
-        winner_color = 'red'
-        winner = ring.red.get_full_name()
-    else:
+    blue_speaker = ring.punch_set.filter(speaker = 'blue')
+    if blue_speaker.count() == 0:
         winner_color = ''
-        winner = _(u'No winner can yet be concluded. The race is on.')
+        if ring.red == request.user:
+            winner = _(u'You have started this discussion and no one is opposing your view yet.')
+        else:
+            winner = _(u'No one is opposing this discussion yet. Can you do it?')
         winner_sofar = '' 
+    else:
+        red_votes = blue_votes = 0 
+        for punch in ring.punch_set.all():
+            if punch.speaker == 'red':            
+                red_votes = red_votes + punch.get_votes()
+            else:            
+                blue_votes = blue_votes + punch.get_votes()
+        if blue_votes > red_votes:
+            winner_color = 'blue'
+            winner = ring.blue.get_full_name()
+        elif blue_votes < red_votes:
+            winner_color = 'red'
+            winner = ring.red.get_full_name()
+        elif blue_votes == red_votes and blue_speaker.count() > 0:
+            winner_color = ''
+            winner = _(u'No winner can yet be concluded. The race is on.')
+            winner_sofar = '' 
     rings = Ring.objects.filter(Q(red=request.user)|Q(blue=request.user))
     variables = {'punch_form':punch_form, 'template_title': template_title, 'ring':ring, 'punches':punches, 'winner_sofar':winner_sofar,
                  'winner':winner, 'winner_color':winner_color, 'rings':rings}
     return render(request, 'discuss_topic.html', variables)
-        
+
 
 @login_required()
 def discussion_add_edit(request, discussion_id=None): 
@@ -279,19 +357,22 @@ def discussion_add_edit(request, discussion_id=None):
             punch.speaker = 'red' 
             punch.datetime = datetime
             punch.save()            
-            invitation = DuelInvitation(                                    
-                                    email=ring_form.cleaned_data['blue_invite'],
-                                    code=get_user_model().objects.make_random_password(20),
-                                    sender=request.user,
-                                    ring=ring
-                                    )
-            invitation.save()
-            try:
-                invitation.send()                
-                messages.warning(request, _(u'An invitation was sent to %(email)s.') % {'email' : invitation.email})
-            except Exception:                
-                messages.error(request, _(u'An error happened when sending the invitation.'))    
-            #log_contact(request, contact, 'contact_add_edit', secondary, profile, is_edit)            
+            if ring_form.cleaned_data['blue_invite']:
+                invitation = DuelInvitation(                                    
+                                        email=ring_form.cleaned_data['blue_invite'],
+                                        code=get_user_model().objects.make_random_password(20),
+                                        sender=request.user,
+                                        ring=ring
+                                        )
+                invitation.save()
+                try:
+                    invitation.send()                
+                    messages.warning(request, _(u'An invitation was sent to %(email)s.') % {'email' : invitation.email})
+                except Exception:                
+                    messages.error(request, _(u'An error happened when sending the invitation.'))    
+            #log_contact(request, contact, 'contact_add_edit', secondary, profile, is_edit)
+            else:
+                messages.warning(request, _(u'Your open topic has been started. Lets wait and see if someone bites...'))            
             return HttpResponseRedirect('/')
     else:
         ring_form = RingForm(instance=ring)
@@ -330,8 +411,12 @@ def filter_discussions(request):
     if request.method == 'POST':
         form = ChooseCategoryForm(request.POST)
         if form.is_valid():
+            show_open_topics = form.cleaned_data['show_open_topics']
             category = form.cleaned_data['category']            
-            rings_queryset = Ring.objects.filter(category=category)
+            if show_open_topics:
+                rings_queryset = Ring.objects.filter(category=category).filter(blue=None)
+            else:
+                rings_queryset = Ring.objects.filter(category=category)
     else:
         form = ChooseCategoryForm()
     rings, paginator, page, page_number = makePaginator(request, ITEMS_PER_PAGE, rings_queryset)

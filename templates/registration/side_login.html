@@ -1,17 +1,13 @@
-{% extends "base.html" %}
-{% load i18n %}
 {% load widget_tweaks %}
-{% block sidebar %}	
-{% endblock %}
-{% block content %}
+{% load i18n %}
 <div class="row-fluid">
     <div class="span3">    	
-		<form id="form_login" class="cb_margin_top" method="post" action="/login/">
+		<form id="form_login" class="cb_margin_top" method="post" action="/side_login/">
 			<div class="parent">	    	
-				<div class="well well-large">
+				<div>	
 					{% show_row_div_below_error form.username|attr:"class:login-input"  %}					
 					{% show_row_div_below_error form.password|attr:"class:login-input"  %}	
-					<input type="hidden" name="next" value="{{next}}" />					
+					<!-- <input type="hidden" name="next" value="/" />	 -->				
 	    			<button id="login-button" type="submit" autocomplete="off" class="btn btn-primary btn-large cb-float-to-right">{% trans 'Log in' %}</button>	    			    			
 				</div>
 				<div class="cb-float-to-right sidebar_width">
@@ -36,7 +32,7 @@
 		</form>
 	</div>
 </div>
-{% endblock %}
+
 
 
 

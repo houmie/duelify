@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% load widget_tweaks %}
+{% block sidebar %}	
+{% endblock %}
 {% block content %}
 <div class="row-fluid">
     <div class="span6 offset3">    	
@@ -9,7 +11,7 @@
 				<div class="well well-large">
 					{% show_row_div_below_error form.first_name %}
 					{% show_row_div_below_error form.last_name %}	
-					{% show_row_div_below_error form.date_of_birth|attr:"class:date_picker" %}					
+					{% show_row_div_below_error form.date_of_birth %}					
 					{% show_row_div_below_error form.email %}
 					{% show_row_div_below_error form.password1 %}
 					{% show_row_div_below_error form.password2 %}					

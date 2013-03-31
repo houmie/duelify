@@ -1,10 +1,9 @@
 from django.conf.urls import patterns, include, url
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from duelify_app.views import logout_page, discussions,\
-    discussion_add_edit, register_page, RegisterSuccess, custom_login,\
-    ChooseCategoryView, CategoryCreate, CategoryUpdate, CategoryDelete,\
+    discussion_add_edit, register_page, RegisterSuccess, ChooseCategoryView, CategoryCreate, CategoryUpdate, CategoryDelete,\
     filter_discussions, friends_accept, topics_discuss, voteup_discussion,\
-    feedback
+    feedback, side_login, main_login
 from django.views.generic.list import ListView
 from duelify_app.models import Ring, Category
 
@@ -27,7 +26,8 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     (r'^admin/', include(admin.site.urls)),
-    (r'^login/$', custom_login),
+    (r'^side_login/$', side_login),
+    (r'^login/$', main_login),
     (r'^logout/$', logout_page),
     (r'^register/$', register_page),
     (r'^register/success/$', RegisterSuccess.as_view(template_name='registration/register_success.html')),

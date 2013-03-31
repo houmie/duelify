@@ -12,7 +12,7 @@
 		{% csrf_token %}
 		<div class="parent">	    	
 			<div class="well well-large">	
-				{% show_row_div_below_error ring_form.topic|attr:"class:big-input"  %}
+				{% show_row_div_below_error ring_form.topic  %}
 				{% show_row_div_below_error ring_form.category %}					
 				{% show_row_div_below_error ring_form.blue_invite %}
 				{% show_row_div_below_error punch_form.discussion %}										
