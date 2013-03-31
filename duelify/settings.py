@@ -37,8 +37,8 @@ DATABASES = {
 PIPELINE_YUGLIFY_BINARY = '/home/hooman/venuscloud/duelify-env/node_modules/yuglify/bin/yuglify'
 PIPELINE_CLOSURE_BINARY = '/home/hooman/venuscloud/duelify-env/bin/closure'
 STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
-PIPELINE_JS_COMPRESSOR = 'pipeline.compressors.closure.ClosureCompressor'
-#PIPELINE_JS_COMPRESSOR = 'pipeline.compressors.yuglify.YuglifyCompressor'
+#PIPELINE_JS_COMPRESSOR = 'pipeline.compressors.closure.ClosureCompressor'
+PIPELINE_JS_COMPRESSOR = 'pipeline.compressors.yuglify.YuglifyCompressor'
 PIPELINE_CSS_COMPRESSOR = 'pipeline.compressors.yuglify.YuglifyCompressor'
 
 PIPELINE_CSS = {
