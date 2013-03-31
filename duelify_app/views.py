@@ -35,6 +35,7 @@ import json
 from django.template.response import TemplateResponse
 
 
+
 def handle_invitation(request, invitation, user):
     ring = invitation.ring
     ring.blue = user
@@ -101,19 +102,38 @@ def Ajaxlogin(request, template_name='registration/login.html',
         context.update(extra_context)
     return TemplateResponse(request, template_name, context, current_app=current_app)
 
+def get_score_for_user(user):
+    score = 0
+    votes = Ring.objects.filter(punch__voters=user)
+    if votes:
+        score = votes.count() * 2
+    rings = Ring.objects.filter(Q(red=user)|Q(blue=user))
+    if rings:
+        score = score + rings.count() * 20
+    return score
+
 
 def side_login(request):
     if request.user.is_authenticated():
         return HttpResponseRedirect('/')
     else:
-        return Ajaxlogin(request, template_name='registration/side_login.html')
+        result = Ajaxlogin(request, template_name='registration/side_login.html')
+        if request.user.is_authenticated():
+            request.user.score = get_score_for_user(request.user)
+            request.user.save()            
+        return result
 
 
 def main_login(request):
     if request.user.is_authenticated():
         return HttpResponseRedirect('/')
     else:
-        return loginview(request)
+        result = loginview(request)
+        if request.user.is_authenticated():
+            request.user.score = get_score_for_user(request.user)
+            request.user.save()            
+        return result
+
 
 @login_required
 def logout_page(request):
@@ -259,6 +279,8 @@ def voteup_discussion(request, punch_id):
     else:
         punch.voters.remove(request.user)
     punch.save()
+    request.user.score = get_score_for_user(request.user)
+    request.user.save()            
     return HttpResponseRedirect(reverse_lazy('discuss-topic', args=str(punch.ring.pk)))
     
 
@@ -291,6 +313,8 @@ def topics_discuss(request, ring_id):
             punch.datetime = timezone.now()
             punch.save()   
             ring.save()
+            request.user.score = get_score_for_user(request.user)
+            request.user.save()            
             return HttpResponseRedirect(reverse_lazy('discuss-topic', args=str(punch.ring.pk)))
     else:
         #Is the user allowed to contribute to this topic?
@@ -356,7 +380,9 @@ def discussion_add_edit(request, discussion_id=None):
             punch.ring = ring
             punch.speaker = 'red' 
             punch.datetime = datetime
-            punch.save()            
+            punch.save() 
+            request.user.score = get_score_for_user(request.user)
+            request.user.save()                       
             if ring_form.cleaned_data['blue_invite']:
                 invitation = DuelInvitation(                                    
                                         email=ring_form.cleaned_data['blue_invite'],

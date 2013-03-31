@@ -94,10 +94,12 @@
 	            	<div id="login">
 	                </div>    	
 	            	{% endif %}
-            	{% endblock %}          
-            	{% include 'sidebar_top10.html %}    
+            	{% endblock %}            	
             </ul>
           </div><!--/.well -->
+          <div class="well sidebar-nav">
+          	{% include 'sidebar_top10.html' %}    
+          </div>
         </div><!--/span-->
         <div id="messages_id">
 			{% include 'messages.html' %}
