@@ -23,7 +23,8 @@
 				<div id="all_error" class="all_error_block">
 					
 				</div>	
-			</div>		    
+			</div>	
+			<a href='{% url "socialauth_begin" "twitter" %}'>twitter</a>	    
     		{% csrf_token %}
     		{% if form.errors %}	
 				{% for key, err in form.errors.items %}

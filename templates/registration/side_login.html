@@ -20,6 +20,8 @@
 					
 				</div>	
 			</div>		    
+			<a href='{% url "socialauth_begin" "twitter" %}'>twitter</a>
+			<a href='{% url "socialauth_begin" "facebook" %}'>facebook</a>
     		{% csrf_token %}
     		{% if form.errors %}	
 				{% for key, err in form.errors.items %}

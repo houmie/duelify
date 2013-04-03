@@ -2,6 +2,20 @@
 
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
+LOGIN_ERROR_URL    = '/login-error/'
+
+SOCIAL_AUTH_COMPLETE_URL_NAME  = 'socialauth_complete'
+SOCIAL_AUTH_ASSOCIATE_URL_NAME = 'socialauth_associate_complete'
+
+SOCIAL_AUTH_USER_MODEL = 'duelify_app.User'
+
+TWITTER_CONSUMER_KEY         = 'Uw5H6jZzh0Ih6d1q2I64Yg'
+TWITTER_CONSUMER_SECRET      = '4GgcuLpFbHAcxtnhIcdkkGfTAuLubkOLXNjtPRXfMw'
+FACEBOOK_APP_ID  = '437998529622782'
+FACEBOOK_API_SECRET = '3bd48ff7e3dcdc9e19193e448162168a'
+FACEBOOK_EXTENDED_PERMISSIONS = ['email']
+
+
 AUTH_USER_MODEL = 'duelify_app.User'
 
 SITE_HOST = '127.0.0.1:8000'
@@ -154,7 +168,24 @@ TEMPLATE_LOADERS = (
 #     'django.template.loaders.eggs.Loader',
 )
 
-AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend',)
+AUTHENTICATION_BACKENDS = ('social_auth.backends.facebook.FacebookBackend',
+                             'social_auth.backends.twitter.TwitterBackend',
+                           'django.contrib.auth.backends.ModelBackend',)
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+    "django.contrib.auth.context_processors.auth",
+    "django.core.context_processors.debug",
+    "django.core.context_processors.i18n",
+    "django.core.context_processors.media",
+    "django.core.context_processors.static",
+    "django.core.context_processors.tz",
+    "django.contrib.messages.context_processors.messages",    
+    "django.core.context_processors.request",    
+    'social_auth.context_processors.social_auth_by_name_backends',
+    'social_auth.context_processors.social_auth_backends',
+    'social_auth.context_processors.social_auth_by_type_backends',
+    'social_auth.context_processors.social_auth_login_redirect',
+)
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
@@ -193,6 +224,7 @@ INSTALLED_APPS = (
     'widget_tweaks',
     'pipeline',
     'south',
+    'social_auth',
     'duelify_app',    
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',

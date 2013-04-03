@@ -25,6 +25,7 @@ urlpatterns = patterns('',
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
     # Uncomment the next line to enable the admin:
+    url(r'', include('social_auth.urls')),
     (r'^admin/', include(admin.site.urls)),
     (r'^side_login/$', side_login),
     (r'^login/$', main_login),
