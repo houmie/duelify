@@ -6,6 +6,7 @@ from duelify_app.views import logout_page, discussions,\
     feedback, side_login, main_login
 from django.views.generic.list import ListView
 from duelify_app.models import Ring, Category
+from django.views.generic.base import TemplateView
 
 
 js_info_dict = {
@@ -27,6 +28,8 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     url(r'', include('social_auth.urls')),
     (r'^admin/', include(admin.site.urls)),
+    url(r'^post$', TemplateView.as_view(template_name="post.html")),
+    #url(r'^error$', TemplateView.as_view(template_name="error.html")),
     (r'^side_login/$', side_login),
     (r'^login/$', main_login),
     (r'^logout/$', logout_page),

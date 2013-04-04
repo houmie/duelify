@@ -2,7 +2,7 @@
 
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
-LOGIN_ERROR_URL    = '/login-error/'
+#LOGIN_ERROR_URL    = '/error'
 
 SOCIAL_AUTH_COMPLETE_URL_NAME  = 'socialauth_complete'
 SOCIAL_AUTH_ASSOCIATE_URL_NAME = 'socialauth_associate_complete'
@@ -12,9 +12,11 @@ SOCIAL_AUTH_USER_MODEL = 'duelify_app.User'
 TWITTER_CONSUMER_KEY         = 'Uw5H6jZzh0Ih6d1q2I64Yg'
 TWITTER_CONSUMER_SECRET      = '4GgcuLpFbHAcxtnhIcdkkGfTAuLubkOLXNjtPRXfMw'
 FACEBOOK_APP_ID  = '437998529622782'
-FACEBOOK_API_SECRET = '3bd48ff7e3dcdc9e19193e448162168a'
+FACEBOOK_API_SECRET = '517e77586ad6c01ba7b62a76de1cba8f'
 FACEBOOK_EXTENDED_PERMISSIONS = ['email']
-
+GOOGLE_OAUTH2_CLIENT_ID = '693177233769.apps.googleusercontent.com'
+GOOGLE_OAUTH2_CLIENT_SECRET = 'Gxf_7quO5tn7gc7l1-s3bCkL'
+SOCIAL_AUTH_REDIRECT_IS_HTTPS = True
 
 AUTH_USER_MODEL = 'duelify_app.User'
 
@@ -71,6 +73,12 @@ PIPELINE_CSS = {
           'bootstrap-datepicker/css/datepicker.css',          
         ),
         'output_filename': 'bootstrap-datepicker/css/datepicker.min.css',        
+    },
+    'social_buttons_css': {
+        'source_filenames': (
+          'css-social-buttons/css/zocial.css',
+        ),
+        'output_filename': 'css-social-buttons/css/zocial.min.css',        
     },    
 }
 
@@ -169,7 +177,8 @@ TEMPLATE_LOADERS = (
 )
 
 AUTHENTICATION_BACKENDS = ('social_auth.backends.facebook.FacebookBackend',
-                             'social_auth.backends.twitter.TwitterBackend',
+                           'social_auth.backends.google.GoogleOAuth2Backend',
+                           'social_auth.backends.twitter.TwitterBackend',
                            'django.contrib.auth.backends.ModelBackend',)
 
 TEMPLATE_CONTEXT_PROCESSORS = (

@@ -8,6 +8,7 @@ from django.core.mail import send_mail
 from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
 from django.conf import settings
+from django.utils import timezone
 
 SPEAKER = (        
         ('red',    _(u'Red')),
@@ -93,7 +94,7 @@ class DuelInvitation(models.Model):
 
 
 class MyUserManager(BaseUserManager):
-    def create_user(self, email, date_of_birth, first_name, last_name, password=None):
+    def create_user(self, email, first_name=None, last_name=None, date_of_birth=None, password=None):
         """
         Creates and saves a User with the given email, date of
         birth and password.
@@ -101,17 +102,17 @@ class MyUserManager(BaseUserManager):
         if not email:
             raise ValueError('Users must have an email address')
         
-        if not first_name:
-            raise ValueError('Users must have an first name')
-        
-        if not last_name:
-            raise ValueError('Users must have an last name')
+#        if not first_name:
+#            raise ValueError('Users must have an first name')
+#        
+#        if not last_name:
+#            raise ValueError('Users must have an last name')
 
         user = self.model(
             email=MyUserManager.normalize_email(email),
-            date_of_birth=date_of_birth,
-            first_name=first_name,
-            last_name=last_name
+            date_of_birth=date_of_birth or timezone.now(),
+            first_name=first_name or '',
+            last_name=last_name or ''
         )
 
         user.set_password(password)

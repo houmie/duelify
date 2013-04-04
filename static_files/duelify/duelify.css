@@ -112,6 +112,10 @@ input {
 	padding: 10px;
 }
 
+.padding_updown_10{
+	padding: 10px 0;
+}
+
 .margin_to_left{
 	margin-left: 10px;
 }
@@ -132,4 +136,23 @@ div.field_error li, div.field_error p, div.field_error, ul.errorlist li{
 
 .all_error_block {
 	width: 17em;
+}
+
+.zocial {
+	width: 14em;
+	margin: 2px 0;
+}
+
+.center {
+	margin-left:auto;
+	margin-right:auto;
+	width: 50%;
+}
+
+.form_width{
+	width: 18em;	
+}
+
+.padding_up_20{
+	padding-top: 20px;	
 }

@@ -1,41 +1,9 @@
 {% extends "base.html" %}
-{% load i18n %}
-{% load widget_tweaks %}
 {% block sidebar %}	
 {% endblock %}
 {% block content %}
-<div class="row-fluid">
-    <div class="span3">    	
-		<form id="form_login" class="cb_margin_top" method="post" action="/login/">
-			<div class="parent">	    	
-				<div class="well well-large">
-					{% show_row_div_below_error form.username|attr:"class:login-input"  %}					
-					{% show_row_div_below_error form.password|attr:"class:login-input"  %}	
-					<input type="hidden" name="next" value="{{next}}" />					
-	    			<button id="login-button" type="submit" autocomplete="off" class="btn btn-primary btn-large cb-float-to-right">{% trans 'Log in' %}</button>	    			    			
-				</div>
-				<div class="cb-float-to-right sidebar_width">
-					<a class="btn_link cb-float-to-right" href="/password_reset/">{% trans 'Forgot password?' %}</a>				
-					<a class="btn_link cb-float-to-right" href="/register/">{% trans 'Sign up' %}</a>
-				</div>
-			</div>	
-			<div class="parent">
-				<div id="all_error" class="all_error_block">
-					
-				</div>	
-			</div>	
-			<a href='{% url "socialauth_begin" "twitter" %}'>twitter</a>	    
-    		{% csrf_token %}
-    		{% if form.errors %}	
-				{% for key, err in form.errors.items %}
-					{% if key == 'username' or key == 'password' %}
-					{% else %}
-						<div class="field field_error">{{err}}</div>
-					{% endif%}
-				{% endfor %}
-			{% endif %}
-		</form>
-	</div>
+<div class="well well-large">
+	{% include 'registration/side_login.html' %}
 </div>
 {% endblock %}
 
