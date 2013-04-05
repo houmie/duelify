@@ -21,7 +21,7 @@ from django.core.paginator import Paginator, InvalidPage
 from django.template.loader_tags import register
 from django.utils import timezone
 from django.utils.translation import ugettext as _, ungettext
-from django.core.urlresolvers import reverse_lazy
+from django.core.urlresolvers import reverse_lazy, reverse
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django import template
@@ -140,6 +140,8 @@ def logout_page(request):
     logout(request)
     return HttpResponseRedirect('/')
 
+#HttpResponseRedirect(reverse('socialauth_begin', args=('facebook',)))
+
 def register_page(request):    
     if 'invitation' in request.session:
             invitation = DuelInvitation.objects.get(id=request.session['invitation'])  
@@ -149,7 +151,7 @@ def register_page(request):
                 handle_invitation(request, invitation, user)
                 #user.backend = 'django.contrib.auth.backends.ModelBackend'
                 login(request, user)
-                return HttpResponseRedirect(reverse_lazy('discuss-topic', args=str(invitation.ring.pk)))
+                return HttpResponseRedirect(reverse('discuss-topic', args=str(invitation.ring.pk)))
     if request.user.is_authenticated():
         return HttpResponseRedirect('/')
     if request.method == 'POST':
@@ -290,16 +292,16 @@ def topics_discuss(request, ring_id):
     punch = Punch(ring = ring)
     punches = ring.punch_set.order_by('datetime')
     is_continue = False
-    is_participate = False
+    #is_participate = False
     template_title = _(u'View & Vote') 
     punch_form = None
-    if ring.red == request.user or ring.blue == request.user:
+    if ring.red.filter(red_users=request.user).exists() or ring.blue.filter(red_users=request.user).exists():
         is_continue = True
         template_title = _(u'Continue Discussion')
-    elif ring.red and not ring.blue:
-        is_participate = True
-        template_title = _(u'Open Topic')
-        ring.blue = request.user
+#    elif ring.red and not ring.blue:
+#        is_participate = True
+#        template_title = _(u'Open Topic')
+#        ring.blue = request.user
     
     if request.method == 'POST':  
         punch_form_post = PunchForm(is_continue, request.POST)
@@ -320,11 +322,11 @@ def topics_discuss(request, ring_id):
         #Is the user allowed to contribute to this topic?
         if is_continue:
             punch_form = PunchForm(is_continue, instance=punch)
-        if is_participate:
+        else:
             punch_form = PunchForm(False, instance=punch)
     
     winner_sofar = _(u'Winner so far in this discussion:')
-    blue_speaker = ring.punch_set.filter(speaker = 'blue')
+    blue_speaker = ring.punch_set.filter(side = 'blue')
     if blue_speaker.count() == 0:
         winner_color = ''
         if ring.red == request.user:
@@ -349,9 +351,9 @@ def topics_discuss(request, ring_id):
             winner_color = ''
             winner = _(u'No winner can yet be concluded. The race is on.')
             winner_sofar = '' 
-    rings = Ring.objects.filter(Q(red=request.user)|Q(blue=request.user))
+    #rings = Ring.objects.filter(Q(red.filter(red_users=request.user)|Q(blue.filter(blue_users=request.user))))    
     variables = {'punch_form':punch_form, 'template_title': template_title, 'ring':ring, 'punches':punches, 'winner_sofar':winner_sofar,
-                 'winner':winner, 'winner_color':winner_color, 'rings':rings}
+                 'winner':winner, 'winner_color':winner_color}
     return render(request, 'discuss_topic.html', variables)
 
 
@@ -373,14 +375,21 @@ def discussion_add_edit(request, discussion_id=None):
         if ring_form.is_valid() and punch_form.is_valid():
             ring = ring_form.save(commit=False)
             datetime = timezone.now()
-            ring.datetime = datetime       
-            ring.red = request.user
+            ring.datetime = datetime
+            pick_side = ring_form.cleaned_data["pick_side"]
             ring.save()
+            if pick_side == 'red':
+                ring.red.add(request.user)
+            else:
+                ring.blue.add(request.user)
+            ring.save()
+                        
             punch = punch_form.save(commit=False)
             punch.ring = ring
-            punch.speaker = 'red' 
+            punch.speaker = request.user 
             punch.datetime = datetime
-            punch.save() 
+            punch.save()
+                        
             request.user.score = get_score_for_user(request.user)
             request.user.save()                       
             if ring_form.cleaned_data['blue_invite']:

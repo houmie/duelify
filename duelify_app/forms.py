@@ -1,4 +1,5 @@
-from duelify_app.models import Ring, DuelInvitation, Punch, Category
+from duelify_app.models import Ring, DuelInvitation, Punch, Category, SIDES,\
+    RULES
 from django import forms
 from django.forms.forms import Form
 import re
@@ -55,29 +56,31 @@ class CategoryForm(forms.ModelForm):
 class RingForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(RingForm, self).__init__(*args, **kwargs)        
-        if self.instance.blue:
-            self.fields['blue_invite'].initial = self.instance.blue
+#        if self.instance.blue:
+#            self.fields['blue_invite'].initial = self.instance.blue
         self.fields['category'].widget.attrs['class'] = 'big-input'
         self.fields['blue_invite'].required = False
+        self.fields['pick_side'].widget.attrs['class'] = 'big-input'
             
-    blue_invite     = forms.EmailField(label=_(u'Email of your opponent - OR - Leave empty as open topic'), widget= forms.TextInput(attrs={'placeholder': _(u'Invite your friend or foe'), 'class': 'placeholder_fix_css big-input', 'autocomplete': 'off'}))
-    
+    blue_invite = forms.EmailField(label=_(u'Email of your opponent - OR - Leave empty as open topic'), widget= forms.TextInput(attrs={'placeholder': _(u'Invite your friend or foe'), 'class': 'placeholder_fix_css big-input', 'autocomplete': 'off'}))
+    pick_side   = forms.ChoiceField(choices=SIDES, label=_(u'Do you agree or disagree with the topic?'))
     class Meta:
         exclude = {'datetime'}
         model = Ring
         widgets = {
-                'topic': forms.TextInput(  attrs={'placeholder': _(u'Enter the topic for discussion'), 'class': 'placeholder_fix_css big-input', 'autocomplete': 'off'}),                
+                'topic': forms.TextInput(  attrs={'placeholder': _(u'Enter the topic for discussion'), 'class': 'placeholder_fix_css big-input', 'autocomplete': 'off'}),
+                'rule': forms.RadioSelect(),                
              }
         
 class PunchForm(forms.ModelForm):
     def __init__(self, is_edit, *args, **kwargs):
-        super(PunchForm, self).__init__(*args, **kwargs)
+        super(PunchForm, self).__init__(*args, **kwargs)        
         if is_edit:
             self.fields['discussion'].widget.attrs['placeholder'] = _(u'Continue the discussion according to given topic')
         else:        
             self.fields['discussion'].widget.attrs['placeholder'] = _(u'Start the discussion according to given topic')
     class Meta:
-        exclude = {'speaker', 'ring', 'datetime', 'voters'}
+        exclude = {'ring', 'datetime', 'voters', 'speaker'}
         model = Punch
         widgets = {
                 'discussion': forms.Textarea(  attrs={'class': 'discussion placeholder_fix_css', 'autocomplete': 'off'}),

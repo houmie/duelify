@@ -139,7 +139,7 @@ div.field_error li, div.field_error p, div.field_error, ul.errorlist li{
 }
 
 .zocial {
-	width: 14em;
+	width: 15em;
 	margin: 2px 0;
 }
 
@@ -155,4 +155,8 @@ div.field_error li, div.field_error p, div.field_error, ul.errorlist li{
 
 .padding_up_20{
 	padding-top: 20px;	
+}
+
+fieldset.inlineLabels ul {
+	list-style:none
 }

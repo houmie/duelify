@@ -16,10 +16,10 @@
 				<h4>{{winner_sofar}} <span class="well-{{winner_color}}">{{winner}}</span></h4>				
 				{% for punch in punches %}
 					<div class="row">
-						{% if punch.speaker = 'red' %}						
+						{% if punch.side = 'blue' %}						
 							<div class="block_inline cb-float-to-left">
-								{{ring.red.get_full_name}}
-								<div class="well well-red well-large">
+								{{ring.blue.get_full_name}}
+								<div class="well well-blue well-large">
 									<p>{{punch.discussion}}</p>
 								</div>
 							</div>
@@ -32,10 +32,10 @@
 							{% endif %}
 						{% endif %}
 	
-						{% if punch.speaker = 'blue' %}
+						{% if punch.side = 'red' %}
 							<div class="block_inline cb-float-to-right">
-								{{ring.blue.get_full_name}}
-								<div class="well well-blue well-large">
+								{{ring.red.get_full_name}}
+								<div class="well well-red well-large">
 									<p>{{punch.discussion}}</p>
 								</div>
 							</div>
@@ -50,7 +50,7 @@
 					</div>
 				{% endfor %}
 				{% if punch_form %}					
-					<form class="{% if punch.speaker = 'blue' %}cb-float-to-right{% else %}cb-float-to-left{% endif %}"  id="save_add_form" method="post" action=".">
+					<form class="{% if punch.side = 'red' %}cb-float-to-right{% else %}cb-float-to-left{% endif %}"  id="save_add_form" method="post" action=".">
 						{% csrf_token %}
 						{% show_row_div_below_error punch_form.discussion  %}		
 						<a id="contact_cancel_btn" href="/" class="btn btn-large cb-float-to-right">{% trans 'Cancel' %}</a> 

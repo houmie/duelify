@@ -10,10 +10,15 @@ from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.utils import timezone
 
-SPEAKER = (        
-        ('red',    _(u'Red')),
-        ('blue',   _(u'Blue')),
-    )
+SIDES = (        
+            ('blue',        _(u'Agree')),
+            ('red',         _(u'Disagree')),
+        )
+
+RULES = (
+            ('public',    _(u'Open to anyone to participate')),
+            ('personal',  _(u'Limited to only you and your invitee')),
+        )
 
 class Category(models.Model):
     category            = models.CharField(_(u'Category'), max_length=35)    
@@ -27,9 +32,10 @@ class Category(models.Model):
 class Ring(models.Model):
     category        = models.ForeignKey(Category, blank=True, null=True)
     topic           = models.CharField(_(u'Topic'), max_length=30)
-    red             = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='red_user' , blank=True, null=True)
-    blue            = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='blue_user', blank=True, null=True)
+    red             = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='red_users' , blank=True, null=True)
+    blue            = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='blue_users', blank=True, null=True)
     datetime        = models.DateTimeField()
+    rule            = models.CharField(max_length=8, choices=RULES, default='public')
     
     def __unicode__(self):
         return self.topic
@@ -40,10 +46,18 @@ class Ring(models.Model):
 
 class Punch(models.Model):
     ring            = models.ForeignKey(Ring)
-    speaker         = models.CharField(max_length=4, choices=SPEAKER, default='red')    
-    discussion      = models.TextField(_(u'Discussion'))
+    speaker         = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='speaker')
+    side            = models.CharField(max_length=4, choices=SIDES, blank=True, null=True)
+    discussion      = models.TextField(_(u'Express your opinion'))
     datetime        = models.DateTimeField()
-    voters           = models.ManyToManyField(settings.AUTH_USER_MODEL, verbose_name= _("Votes"), null=True, blank=True)
+    voters          = models.ManyToManyField(settings.AUTH_USER_MODEL, verbose_name= _("Votes"), null=True, blank=True)
+    
+    def save(self, *args, **kwargs):    
+        if self.ring.red.filter(red_users=self.speaker).exists():
+            self.side = 'red'
+        else:
+            self.side = 'blue'
+        super(Punch, self).save(*args, **kwargs) # Call the "real" save() method.
     
     def get_votes(self):
         return self.voters.count()
