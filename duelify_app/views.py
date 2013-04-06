@@ -294,10 +294,13 @@ def topics_discuss(request, ring_id):
     is_vote_only = False
     template_title = _(u'View & Vote') 
     punch_form = None    
+    is_continue = False
+    if ring.red.filter(pk=request.user.pk).exists() or ring.blue.filter(pk=request.user.pk).exists():
+        is_continue = True
     if ring.rule == 'public':
         template_title = _(u'Open Topic')
-    elif ring.red.filter(red_users=request.user).exists() or ring.blue.filter(red_users=request.user).exists():        
-        template_title = _(u'Continue Discussion')        
+    elif is_continue:        
+        template_title = _(u'Continue Discussion')                
     else:
         is_vote_only = True
     
@@ -307,9 +310,9 @@ def topics_discuss(request, ring_id):
             punch = punch_form_post.save(commit=False)
             punch.ring = ring         
             
-            if punch.side == 'red' and not ring.red.filter(red_users=request.user).exists():
+            if punch.side == 'red' and not ring.red.filter(pk=request.user.pk).exists():
                 ring.red.add(request.user)
-            if punch.side == 'blue'and not ring.blue.filter(blue_users=request.user).exists():
+            if punch.side == 'blue'and not ring.blue.filter(pk=request.user.pk).exists():
                 ring.blue.add(request.user)
             
             punch.speaker = request.user
@@ -322,16 +325,16 @@ def topics_discuss(request, ring_id):
     else:
         #Is the user allowed to contribute to this topic?
         if not is_vote_only:            
-            if ring.red.filter(red_users=request.user).exists():
+            if ring.red.filter(pk=request.user.pk).exists():
                 punch.side = 'red'
-            if ring.blue.filter(blue_users=request.user).exists():
+            if ring.blue.filter(pk=request.user.pk).exists():
                 punch.side = 'blue'
             punch_form = PunchForm(instance=punch)
     
     is_without_opponent = False
     winner_sofar = _(u'Winner so far in this discussion:')    
     winner_color = ''
-    if ring.red.filter(red_users=request.user).exists() or ring.blue.filter(blue_users=request.user).exists():
+    if ring.red.filter(pk=request.user.pk).exists() or ring.blue.filter(pk=request.user.pk).exists():
         if ring.red.count() == 0 or ring.blue.count() == 0: 
             winner = _(u'You have started this discussion and no one is opposing your view yet.')
             winner_sofar = ''
@@ -357,9 +360,9 @@ def topics_discuss(request, ring_id):
         winner_color = ''
         winner = _(u'No winner can yet be concluded. The race is on.')
         winner_sofar = '' 
-    #rings = Ring.objects.filter(Q(red.filter(red_users=request.user)|Q(blue.filter(blue_users=request.user))))    
+    #rings = Ring.objects.filter(Q(red.filter(pk=request.user.pk)|Q(blue.filter(pk=request.user.pk))))    
     variables = {'punch_form':punch_form, 'template_title': template_title, 'ring':ring, 'punches':punches, 'winner_sofar':winner_sofar,
-                 'winner':winner, 'winner_color':winner_color}
+                 'winner':winner, 'winner_color':winner_color, 'is_continue':is_continue}
     return render(request, 'discuss_topic.html', variables)
 
 

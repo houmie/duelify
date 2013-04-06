@@ -74,12 +74,16 @@ class RingForm(forms.ModelForm):
         
 class PunchForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
+        is_new = kwargs.pop('is_new', None)
+        #is_continue = kwargs.pop('is_continue', None)
         super(PunchForm, self).__init__(*args, **kwargs)        
         self.fields['discussion'].widget.attrs['placeholder'] = _(u'Express your opinion according to given topic')
         self.fields['side'].widget.attrs['class'] = 'big-input'
-        is_new = kwargs.pop('is_new', None)
+        
         if is_new:
             self.fields['side'].label = _(u'Do you agree or disagree with your topic?')
+        #if is_continue:
+        #    self.fields['side'].widget.attrs['class'] = 'hidden'
         
     class Meta:
         exclude = {'ring', 'datetime', 'voters', 'speaker'}
