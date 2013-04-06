@@ -60,10 +60,10 @@ class RingForm(forms.ModelForm):
 #            self.fields['blue_invite'].initial = self.instance.blue
         self.fields['category'].widget.attrs['class'] = 'big-input'
         self.fields['blue_invite'].required = False
-        self.fields['pick_side'].widget.attrs['class'] = 'big-input'
+        #self.fields['pick_side'].widget.attrs['class'] = 'big-input'
             
     blue_invite = forms.EmailField(label=_(u'Email of your opponent - OR - Leave empty as open topic'), widget= forms.TextInput(attrs={'placeholder': _(u'Invite your friend or foe'), 'class': 'placeholder_fix_css big-input', 'autocomplete': 'off'}))
-    pick_side   = forms.ChoiceField(choices=SIDES, label=_(u'Do you agree or disagree with the topic?'))
+    #pick_side   = forms.ChoiceField(choices=SIDES, label=_(u'Do you agree or disagree with the topic?'))
     class Meta:
         exclude = {'datetime'}
         model = Ring
@@ -76,9 +76,13 @@ class PunchForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(PunchForm, self).__init__(*args, **kwargs)        
         self.fields['discussion'].widget.attrs['placeholder'] = _(u'Express your opinion according to given topic')
+        self.fields['side'].widget.attrs['class'] = 'big-input'
+        is_new = kwargs.pop('is_new', None)
+        if is_new:
+            self.fields['side'].label = _(u'Do you agree or disagree with your topic?')
         
     class Meta:
-        exclude = {'ring', 'datetime', 'voters', 'speaker', 'side'}
+        exclude = {'ring', 'datetime', 'voters', 'speaker'}
         model = Punch
         widgets = {
                 'discussion': forms.Textarea(  attrs={'class': 'discussion placeholder_fix_css', 'autocomplete': 'off'}),

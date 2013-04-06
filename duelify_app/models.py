@@ -21,6 +21,11 @@ SIDES = (
             ('red',         _(u'Disagree')),
         )
 
+SIDES_C = (        
+            ('blue',        _(u'Blue (agree)')),
+            ('red',         _(u'Red (disagree)')),
+        )
+
 RULES = (
             ('public',    _(u'Open to anyone to participate')),
             ('personal',  _(u'Limited to only you and your invitee')),
@@ -53,7 +58,7 @@ class Ring(models.Model):
 class Punch(models.Model):
     ring            = models.ForeignKey(Ring)
     speaker         = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='speaker')
-    side            = models.CharField(max_length=4, choices=SIDES, default='blue')
+    side            = models.CharField(max_length=4, choices=SIDES_C, default='blue', verbose_name=_("On which side are you?"))
     discussion      = models.TextField(_(u'Express your opinion'), validators=[validate_min_100])
     datetime        = models.DateTimeField()
     voters          = models.ManyToManyField(settings.AUTH_USER_MODEL, verbose_name= _("Votes"), null=True, blank=True)

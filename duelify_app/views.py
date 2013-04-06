@@ -300,33 +300,38 @@ def topics_discuss(request, ring_id):
         template_title = _(u'Continue Discussion')        
     else:
         is_vote_only = True
-
     
     if request.method == 'POST':  
         punch_form_post = PunchForm(request.POST)
         if punch_form_post.is_valid():
             punch = punch_form_post.save(commit=False)
-            punch.ring = ring
-            if ring.red == request.user:
-                punch.speaker = 'red'
-            elif (ring.blue == request.user) or (ring.red and not ring.blue):
-                punch.speaker = 'blue'     
-                       
+            punch.ring = ring         
+            
+            if punch.side == 'red' and not ring.red.filter(red_users=request.user).exists():
+                ring.red.add(request.user)
+            if punch.side == 'blue'and not ring.blue.filter(blue_users=request.user).exists():
+                ring.blue.add(request.user)
+            
+            punch.speaker = request.user
             punch.datetime = timezone.now()
-            punch.save()   
+            punch.save()
             ring.save()
             request.user.score = get_score_for_user(request.user)
             request.user.save()            
             return HttpResponseRedirect(reverse_lazy('discuss-topic', args=str(punch.ring.pk)))
     else:
         #Is the user allowed to contribute to this topic?
-        if not is_vote_only:
-            punch_form = PunchForm(instance=punch)        
+        if not is_vote_only:            
+            if ring.red.filter(red_users=request.user).exists():
+                punch.side = 'red'
+            if ring.blue.filter(blue_users=request.user).exists():
+                punch.side = 'blue'
+            punch_form = PunchForm(instance=punch)
     
     is_without_opponent = False
     winner_sofar = _(u'Winner so far in this discussion:')    
     winner_color = ''
-    if ring.red.filter(red_users=request.user).exists() or ring.blue.filter(red_users=request.user).exists():
+    if ring.red.filter(red_users=request.user).exists() or ring.blue.filter(blue_users=request.user).exists():
         if ring.red.count() == 0 or ring.blue.count() == 0: 
             winner = _(u'You have started this discussion and no one is opposing your view yet.')
             winner_sofar = ''
@@ -377,14 +382,12 @@ def discussion_add_edit(request, discussion_id=None):
             
             datetime = timezone.now()
             ring.datetime = datetime
-            pick_side = ring_form.cleaned_data["pick_side"]
+            #pick_side = ring_form.cleaned_data["pick_side"]
             ring.save()
-            if pick_side == 'red':
-                ring.red.add(request.user)
-                punch.side = 'red'                
+            if punch.side == 'red':
+                ring.red.add(request.user)                   
             else:
-                ring.blue.add(request.user)
-                punch.side = 'blue'
+                ring.blue.add(request.user)                
             ring.save()                        
             
             punch.ring = ring
@@ -413,7 +416,7 @@ def discussion_add_edit(request, discussion_id=None):
             return HttpResponseRedirect('/')
     else:
         ring_form = RingForm(instance=ring)
-        punch_form = PunchForm(instance=punch)
+        punch_form = PunchForm(instance=punch, is_new=True)
     variables = {'ring_form':ring_form, 'punch_form':punch_form, 'template_title': template_title }
     return render(request, 'discussion.html', variables)
 
