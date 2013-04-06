@@ -157,6 +157,7 @@ div.field_error li, div.field_error p, div.field_error, ul.errorlist li{
 	padding-top: 20px;	
 }
 
-fieldset.inlineLabels ul {
-	list-style:none
+div.radio ul {
+	list-style-type: none;
+	margin: 0;
 }

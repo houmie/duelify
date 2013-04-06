@@ -18,34 +18,38 @@
 					<div class="row">
 						{% if punch.side = 'blue' %}						
 							<div class="block_inline cb-float-to-left">
-								{{ring.blue.get_full_name}}
+								{{punch.speaker.get_full_name}}
 								<div class="well well-blue well-large">
 									<p>{{punch.discussion}}</p>
 								</div>
 							</div>
-							{% if not punch_form %}
+							
 								<div class="block_inline cb-float-to-left">
+									{% if punch.speaker != user %}
 									<a class="btn {% get_votes_for_punch punch user %}" href="/vote-up/discussion/{{punch.pk}}"><i class="icon-thumbs-up icon-large"/></i></a>
+									{% endif %}
 									<!-- <a class="btn {% if is_vote_down_active %}btn-success{%endif%}{% if is_vote_up_active %}disabled{%endif%}" href="/vote-down/discussion/{{punch.pk}}"><i class="icon-thumbs-down icon-large"></i></a> -->
 									{% trans 'Votes' %}: {{punch.get_votes}}
 								</div>
-							{% endif %}
+							
 						{% endif %}
 	
 						{% if punch.side = 'red' %}
 							<div class="block_inline cb-float-to-right">
-								{{ring.red.get_full_name}}
+								{{punch.speaker.get_full_name}}
 								<div class="well well-red well-large">
 									<p>{{punch.discussion}}</p>
 								</div>
 							</div>
-							{% if not punch_form %}
+							
 								<div class="block_inline cb-float-to-right">
+									{% if punch.speaker != user %}
 									<a class="btn {% get_votes_for_punch punch user %}" href="/vote-up/discussion/{{punch.pk}}"><i class="icon-thumbs-up icon-large"/></i></a>
+									{% endif %}
 									<!-- <a class="btn {% if is_vote_down_active %}btn-success{%endif%}{% if is_vote_up_active %}disabled{%endif%}" href="/vote-down/discussion/{{punch.pk}}"><i class="icon-thumbs-down icon-large"></i></a> -->
 									{% trans 'Votes' %}: {{punch.get_votes}}
 								</div>
-							{% endif %}
+							
 						{% endif %}
 					</div>
 				{% endfor %}

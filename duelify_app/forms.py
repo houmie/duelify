@@ -73,14 +73,12 @@ class RingForm(forms.ModelForm):
              }
         
 class PunchForm(forms.ModelForm):
-    def __init__(self, is_edit, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super(PunchForm, self).__init__(*args, **kwargs)        
-        if is_edit:
-            self.fields['discussion'].widget.attrs['placeholder'] = _(u'Continue the discussion according to given topic')
-        else:        
-            self.fields['discussion'].widget.attrs['placeholder'] = _(u'Start the discussion according to given topic')
+        self.fields['discussion'].widget.attrs['placeholder'] = _(u'Express your opinion according to given topic')
+        
     class Meta:
-        exclude = {'ring', 'datetime', 'voters', 'speaker'}
+        exclude = {'ring', 'datetime', 'voters', 'speaker', 'side'}
         model = Punch
         widgets = {
                 'discussion': forms.Textarea(  attrs={'class': 'discussion placeholder_fix_css', 'autocomplete': 'off'}),

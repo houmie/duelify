@@ -9,6 +9,12 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.utils import timezone
+from django.core.exceptions import ValidationError
+
+
+def validate_min_100(value):
+    if value.__len__()  < 100:
+        raise ValidationError(u'Only %s characterss? - please express your opinion in more than 100 characters' % value.__len__())
 
 SIDES = (        
             ('blue',        _(u'Agree')),
@@ -47,16 +53,16 @@ class Ring(models.Model):
 class Punch(models.Model):
     ring            = models.ForeignKey(Ring)
     speaker         = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='speaker')
-    side            = models.CharField(max_length=4, choices=SIDES, blank=True, null=True)
-    discussion      = models.TextField(_(u'Express your opinion'))
+    side            = models.CharField(max_length=4, choices=SIDES, default='blue')
+    discussion      = models.TextField(_(u'Express your opinion'), validators=[validate_min_100])
     datetime        = models.DateTimeField()
     voters          = models.ManyToManyField(settings.AUTH_USER_MODEL, verbose_name= _("Votes"), null=True, blank=True)
     
     def save(self, *args, **kwargs):    
-        if self.ring.red.filter(red_users=self.speaker).exists():
-            self.side = 'red'
-        else:
-            self.side = 'blue'
+#        if self.ring.red.filter(red_users=self.speaker).exists():
+#            self.side = 'red'
+#        else:
+#            self.side = 'blue'
         super(Punch, self).save(*args, **kwargs) # Call the "real" save() method.
     
     def get_votes(self):

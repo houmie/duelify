@@ -290,28 +290,28 @@ def voteup_discussion(request, punch_id):
 def topics_discuss(request, ring_id):
     ring = get_object_or_404(Ring.objects.all(), pk=ring_id)
     punch = Punch(ring = ring)
-    punches = ring.punch_set.order_by('datetime')
-    is_continue = False
-    #is_participate = False
+    punches = ring.punch_set.order_by('datetime')    
+    is_vote_only = False
     template_title = _(u'View & Vote') 
-    punch_form = None
-    if ring.red.filter(red_users=request.user).exists() or ring.blue.filter(red_users=request.user).exists():
-        is_continue = True
-        template_title = _(u'Continue Discussion')
-#    elif ring.red and not ring.blue:
-#        is_participate = True
-#        template_title = _(u'Open Topic')
-#        ring.blue = request.user
+    punch_form = None    
+    if ring.rule == 'public':
+        template_title = _(u'Open Topic')
+    elif ring.red.filter(red_users=request.user).exists() or ring.blue.filter(red_users=request.user).exists():        
+        template_title = _(u'Continue Discussion')        
+    else:
+        is_vote_only = True
+
     
     if request.method == 'POST':  
-        punch_form_post = PunchForm(is_continue, request.POST)
+        punch_form_post = PunchForm(request.POST)
         if punch_form_post.is_valid():
             punch = punch_form_post.save(commit=False)
             punch.ring = ring
             if ring.red == request.user:
                 punch.speaker = 'red'
             elif (ring.blue == request.user) or (ring.red and not ring.blue):
-                punch.speaker = 'blue'                
+                punch.speaker = 'blue'     
+                       
             punch.datetime = timezone.now()
             punch.save()   
             ring.save()
@@ -320,37 +320,38 @@ def topics_discuss(request, ring_id):
             return HttpResponseRedirect(reverse_lazy('discuss-topic', args=str(punch.ring.pk)))
     else:
         #Is the user allowed to contribute to this topic?
-        if is_continue:
-            punch_form = PunchForm(is_continue, instance=punch)
-        else:
-            punch_form = PunchForm(False, instance=punch)
+        if not is_vote_only:
+            punch_form = PunchForm(instance=punch)        
     
-    winner_sofar = _(u'Winner so far in this discussion:')
-    blue_speaker = ring.punch_set.filter(side = 'blue')
-    if blue_speaker.count() == 0:
-        winner_color = ''
-        if ring.red == request.user:
+    is_without_opponent = False
+    winner_sofar = _(u'Winner so far in this discussion:')    
+    winner_color = ''
+    if ring.red.filter(red_users=request.user).exists() or ring.blue.filter(red_users=request.user).exists():
+        if ring.red.count() == 0 or ring.blue.count() == 0: 
             winner = _(u'You have started this discussion and no one is opposing your view yet.')
-        else:
-            winner = _(u'No one is opposing this discussion yet. Can you do it?')
-        winner_sofar = '' 
+            winner_sofar = ''
+            is_without_opponent = True
     else:
-        red_votes = blue_votes = 0 
-        for punch in ring.punch_set.all():
-            if punch.speaker == 'red':            
-                red_votes = red_votes + punch.get_votes()
-            else:            
-                blue_votes = blue_votes + punch.get_votes()
-        if blue_votes > red_votes:
-            winner_color = 'blue'
-            winner = ring.blue.get_full_name()
-        elif blue_votes < red_votes:
-            winner_color = 'red'
-            winner = ring.red.get_full_name()
-        elif blue_votes == red_votes and blue_speaker.count() > 0:
-            winner_color = ''
-            winner = _(u'No winner can yet be concluded. The race is on.')
-            winner_sofar = '' 
+        winner = _(u'No one is opposing this view yet. Can you do it?')
+        winner_sofar = ''
+        is_without_opponent = True     
+    
+    red_votes = blue_votes = 0 
+    for punch in ring.punch_set.all():
+        if punch.side == 'red':            
+            red_votes = red_votes + punch.get_votes()
+        else:            
+            blue_votes = blue_votes + punch.get_votes()
+    if blue_votes > red_votes:
+        winner_color = 'blue'
+        winner = ring.speaker.get_full_name()
+    elif blue_votes < red_votes:
+        winner_color = 'red'
+        winner = ring.speaker.get_full_name()
+    elif blue_votes == red_votes and not is_without_opponent:
+        winner_color = ''
+        winner = _(u'No winner can yet be concluded. The race is on.')
+        winner_sofar = '' 
     #rings = Ring.objects.filter(Q(red.filter(red_users=request.user)|Q(blue.filter(blue_users=request.user))))    
     variables = {'punch_form':punch_form, 'template_title': template_title, 'ring':ring, 'punches':punches, 'winner_sofar':winner_sofar,
                  'winner':winner, 'winner_color':winner_color}
@@ -358,33 +359,34 @@ def topics_discuss(request, ring_id):
 
 
 @login_required()
-def discussion_add_edit(request, discussion_id=None): 
-    is_edit = False   
+def discussion_add_edit(request, discussion_id=None):       
     if discussion_id is None:
         ring = Ring(category = Category.objects.get(pk=1), datetime=timezone.now())
         punch = Punch(ring=ring)
         template_title = _(u'Start a new topic')        
-    else:
-        is_edit = True
+    else:        
         ring = get_object_or_404(Ring.objects.all(), pk=discussion_id)
         punch = punch(ring=ring)
         template_title = _(u'Edit existing topic')        
     if request.method == 'POST':        
         ring_form = RingForm(request.POST)        
-        punch_form = PunchForm(is_edit, request.POST)
+        punch_form = PunchForm(request.POST)
         if ring_form.is_valid() and punch_form.is_valid():
             ring = ring_form.save(commit=False)
+            punch = punch_form.save(commit=False)
+            
             datetime = timezone.now()
             ring.datetime = datetime
             pick_side = ring_form.cleaned_data["pick_side"]
             ring.save()
             if pick_side == 'red':
                 ring.red.add(request.user)
+                punch.side = 'red'                
             else:
                 ring.blue.add(request.user)
-            ring.save()
-                        
-            punch = punch_form.save(commit=False)
+                punch.side = 'blue'
+            ring.save()                        
+            
             punch.ring = ring
             punch.speaker = request.user 
             punch.datetime = datetime
@@ -411,7 +413,7 @@ def discussion_add_edit(request, discussion_id=None):
             return HttpResponseRedirect('/')
     else:
         ring_form = RingForm(instance=ring)
-        punch_form = PunchForm(is_edit, instance=punch)
+        punch_form = PunchForm(instance=punch)
     variables = {'ring_form':ring_form, 'punch_form':punch_form, 'template_title': template_title }
     return render(request, 'discussion.html', variables)
 
