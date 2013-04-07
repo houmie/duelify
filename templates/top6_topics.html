@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% load get_button_title %}
 {% block content %}
 <div class="hero-unit">
     <!-- <i class="icon-quote-left icon-4x pull-left"></i> -->
@@ -21,7 +22,7 @@
           {% if ring.punch_set.all %}
           	<p>{{ ring.punch_set.all.0.discussion|slice:":100" }}...</p>
           {% endif %}  
-          <p><a class="btn discuss_btn" href="/topics/discuss/{{ring.pk}}">{% if ring.red == user or ring.blue == user %}{% trans 'Continue discussion' %} &raquo; {% elif ring.red and not ring.blue %}{% trans 'Participate &raquo; ' %}{% else %}{% trans 'View &amp; Vote &raquo; ' %}{% endif %}</a></p>
+          <p><a class="btn discuss_btn" href="/topics/discuss/{{ring.pk}}">{% get_button_title ring user %}</a></p>
         </div><!--/span-->      
     {% endfor %}      
 </div><!--/row-->
@@ -33,7 +34,7 @@
           {% if ring.punch_set.all %}
           	<p>{{ ring.punch_set.all.0.discussion|slice:":100" }}...</p>
           {% endif %}  
-          <p><a class="btn discuss_btn" href="/topics/discuss/{{ring.pk}}">{% if ring.red == user or ring.blue == user %}{% trans 'Continue discussion' %} &raquo; {% elif ring.red and not ring.blue %}{% trans 'Participate &raquo; ' %}{% else %}{% trans 'View &amp; Vote &raquo; ' %}{% endif %}</a></p>
+          <p><a class="btn discuss_btn" href="/topics/discuss/{{ring.pk}}">{% get_button_title ring user %}</a></p>
         </div><!--/span-->    
     {% endfor %}        
 </div><!--/row-->

@@ -149,6 +149,12 @@ div.field_error li, div.field_error p, div.field_error, ul.errorlist li{
 	width: 50%;
 }
 
+.center-25 {
+	margin-left:auto;
+	margin-right:auto;
+	width: 25%;
+}
+
 .form_width{
 	width: 18em;	
 }

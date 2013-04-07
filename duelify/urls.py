@@ -3,7 +3,7 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from duelify_app.views import logout_page, discussions,\
     discussion_add_edit, register_page, RegisterSuccess, ChooseCategoryView, CategoryCreate, CategoryUpdate, CategoryDelete,\
     filter_discussions, friends_accept, topics_discuss, voteup_discussion,\
-    feedback, side_login, main_login
+    feedback, side_login, main_login, new_users_invited, login_invited
 from django.views.generic.list import ListView
 from duelify_app.models import Ring, Category
 from django.views.generic.base import TemplateView
@@ -67,6 +67,10 @@ urlpatterns = patterns('',
 #    url(r'^category/delete/(?P<pk>\d+)/$', CategoryDelete.as_view(), name='author-delete'),
     #(r'^duel/invite/$', duel_invite),
     (r'^duel/accept/(\w+)/$', friends_accept),
-
+    #url(r'^register-invite/$', register_invite, name='register-invite'),
+    url(r'^new-users-invited/$', new_users_invited, name='new-users-invited'),
+    url(r'^login-invited/$', login_invited, name='login-invited'),    
+    url(r'^signup-error/$', TemplateView.as_view(template_name="error.html"), name='signup-error'),
+        
 )
 urlpatterns += staticfiles_urlpatterns()

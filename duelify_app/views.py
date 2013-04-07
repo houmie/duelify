@@ -37,9 +37,12 @@ from django.template.response import TemplateResponse
 
 
 def handle_invitation(request, invitation, user):
-    ring = invitation.ring
-    ring.blue = user
-    ring.save() # Delete the invitation from the database and session.
+    if invitation.ring.rule == 'personal':
+        if invitation.ring.punch_set.all()[:1].get().side == 'red':
+            invitation.ring.blue.add(user)
+        else:
+            invitation.ring.red.add(user)
+            invitation.ring.save() # Delete the invitation from the database and session.
     invitation.delete()
     del request.session['invitation']
 
@@ -142,16 +145,58 @@ def logout_page(request):
 
 #HttpResponseRedirect(reverse('socialauth_begin', args=('facebook',)))
 
+def friends_accept(request, code):
+    invitation = get_object_or_404(DuelInvitation, code__exact=code)
+    request.session['invitation'] = invitation.id
+    return HttpResponseRedirect('/register/')
+
+
+def login_invited(request):
+    if 'invitation' in request.session:
+        invitation = DuelInvitation.objects.get(id=request.session['invitation'])  
+        if invitation.ring.rule == 'personal':
+            if invitation.ring.punch_set.all()[:1].get().side == 'red':
+                invitation.ring.blue.add(request.user)
+            else:
+                invitation.ring.red.add(request.user)
+        # Delete the invitation from the database and session.
+        punch_id = invitation.ring.pk
+        invitation.delete()
+        del request.session['invitation']                  
+        return HttpResponseRedirect(reverse('discuss-topic', args=str(punch_id)))
+    else:
+        return HttpResponseRedirect('/')
+
+def new_users_invited(request):
+    #request.user.date_of_birth = request.user.social_auth.get(provider='facebook').extra_data['birthday']
+    if 'invitation' in request.session:
+        invitation = DuelInvitation.objects.get(id=request.session['invitation'])  
+        if invitation.ring.rule == 'personal':
+            if invitation.ring.punch_set.all()[:1].get().side == 'red':
+                invitation.ring.blue.add(request.user)
+            else:
+                invitation.ring.red.add(request.user)
+        # Delete the invitation from the database and session.
+        punch_id = invitation.ring.pk
+        invitation.delete()
+        del request.session['invitation']
+        new_user_annoucement(request.user)          
+        return HttpResponseRedirect(reverse('discuss-topic', args=str(punch_id)))
+    else:
+        return HttpResponseRedirect('/')
+        
+
 def register_page(request):    
     if 'invitation' in request.session:
             invitation = DuelInvitation.objects.get(id=request.session['invitation'])  
             users = get_user_model().objects.filter(email=invitation.email)
             if users.count() > 0:
                 user = users[0]
+                punch_id = invitation.ring.pk
                 handle_invitation(request, invitation, user)
-                #user.backend = 'django.contrib.auth.backends.ModelBackend'
+                user.backend = 'django.contrib.auth.backends.ModelBackend'
                 login(request, user)
-                return HttpResponseRedirect(reverse('discuss-topic', args=str(invitation.ring.pk)))
+                return HttpResponseRedirect(reverse('discuss-topic', args=str(punch_id)))
     if request.user.is_authenticated():
         return HttpResponseRedirect('/')
     if request.method == 'POST':
@@ -161,46 +206,46 @@ def register_page(request):
         else:
             form = RegistrationForm(request.POST)
         if form.is_valid():
-#            user = get_user_model().objects.create_user(
-#                first_name = form.cleaned_data['first_name'],
-#                last_name = form.cleaned_data['last_name'],
-#                date_of_birth = form.cleaned_data['dob'],
-#                email=form.cleaned_data['email'],
-#                password=form.cleaned_data['password2']                              
-#            )
             user = form.save()
             
             #user_location = get_user_location_details(request)
             #browser_type = get_user_browser(request)
             
             if 'invitation' in request.session:
-                # Retrieve the invitation object.
-                #invitation = DuelInvitation.objects.get(id=request.session['invitation'])                
+                # Retrieve the invitation object.                
                 handle_invitation(request, invitation, user)                
             
                 
             user = authenticate(username=form.cleaned_data['email'], password=form.cleaned_data['password2'])            
             login(request, user)
 
-            template = get_template('registration/welcome.txt')
-            context = Context({'first_name': user.first_name, 'email': user.email})
-            message = template.render(context)    
-            send_mail('Welcome to Duelify', message, settings.DEFAULT_FROM_EMAIL, [user.email])
-            
-            template = get_template('registration/new_signup.txt')            
-            context = Context({'username': user})
-            message = template.render(context)
-            send_mail('New User Registration', message, settings.DEFAULT_FROM_EMAIL, [settings.DEFAULT_FROM_EMAIL])
+            new_user_annoucement(user)
             return HttpResponseRedirect('/register/success/')
     else:
         if 'invitation' in request.session:
             invitation = DuelInvitation.objects.get(id=request.session['invitation'])                   
             form = RegistrationForm(is_accept_invite = True, _email = invitation.email)
         else:            
-            form = RegistrationForm()
-    variables = {'form':form}    
+            form = RegistrationForm()    
+    
+    is_invited = False
+    if 'invitation' in request.session:
+        is_invited = True
+        variables = {'form':form, 'is_invited': is_invited, 'invitee':invitation.email, 'inviter':invitation.sender.get_full_name(), 'topic':invitation.ring.topic }
+    else:
+        variables = {'form':form, 'is_invited': is_invited }
     return render(request, 'registration/register.html', variables)
 
+def new_user_annoucement(user):
+    template = get_template('registration/welcome.txt')
+    context = Context({'first_name': user.first_name, 'email': user.email})
+    message = template.render(context)    
+    send_mail('Welcome to Duelify', message, settings.DEFAULT_FROM_EMAIL, [user.email])
+    
+    template = get_template('registration/new_signup.txt')            
+    context = Context({'username': user})
+    message = template.render(context)
+    send_mail('New User Registration', message, settings.DEFAULT_FROM_EMAIL, [settings.DEFAULT_FROM_EMAIL])
 
 #@login_required
 #def friends_invite(request):
@@ -228,10 +273,7 @@ def register_page(request):
 #    return render(request, 'registration/friends_invite.html', variables)
 
 
-def friends_accept(request, code):
-    invitation = get_object_or_404(DuelInvitation, code__exact=code)
-    request.session['invitation'] = invitation.id
-    return HttpResponseRedirect('/register/')
+
  
 ITEMS_PER_PAGE = 9
 def makePaginator(request, ITEMS_PER_PAGE, queryset):
@@ -275,14 +317,15 @@ def merge_with_additional_variables(request, paginator, page, page_number, varia
 
 @login_required()
 def voteup_discussion(request, punch_id):
-    punch = get_object_or_404(Punch.objects.all(), pk=punch_id)    
-    if punch.voters.filter(pk=request.user.pk).count() == 0:
-        punch.voters.add(request.user)
-    else:
-        punch.voters.remove(request.user)
-    punch.save()
-    request.user.score = get_score_for_user(request.user)
-    request.user.save()            
+    punch = get_object_or_404(Punch.objects.all(), pk=punch_id)
+    if punch.speaker != request.user:        
+        if punch.voters.filter(pk=request.user.pk).count() == 0:
+            punch.voters.add(request.user)
+        else:
+            punch.voters.remove(request.user)
+        punch.save()
+        request.user.score = get_score_for_user(request.user)
+        request.user.save()            
     return HttpResponseRedirect(reverse_lazy('discuss-topic', args=str(punch.ring.pk)))
     
 
@@ -312,9 +355,13 @@ def topics_discuss(request, ring_id):
             
             if punch.side == 'red' and not ring.red.filter(pk=request.user.pk).exists():
                 ring.red.add(request.user)
-            if punch.side == 'blue'and not ring.blue.filter(pk=request.user.pk).exists():
+            elif punch.side == 'blue' and not ring.blue.filter(pk=request.user.pk).exists():
                 ring.blue.add(request.user)
-            
+            elif not punch.side and ring.red.filter(pk=request.user.pk).exists():
+                punch.side = 'red'
+            elif not punch.side and ring.blue.filter(pk=request.user.pk).exists():
+                punch.side = 'blue'
+                
             punch.speaker = request.user
             punch.datetime = timezone.now()
             punch.save()
@@ -340,9 +387,14 @@ def topics_discuss(request, ring_id):
             winner_sofar = ''
             is_without_opponent = True
     else:
-        winner = _(u'No one is opposing this view yet. Can you do it?')
-        winner_sofar = ''
-        is_without_opponent = True     
+        if ring.rule == 'public':
+            winner = _(u'No one is opposing this view yet. Can you do it?')
+            winner_sofar = ''
+            is_without_opponent = True
+        else:
+            winner = _(u'This is a personal duel between two authors. Please vote for who is right.')
+            winner_sofar = ''
+            is_without_opponent = True
     
     red_votes = blue_votes = 0 
     for punch in ring.punch_set.all():
@@ -352,10 +404,16 @@ def topics_discuss(request, ring_id):
             blue_votes = blue_votes + punch.get_votes()
     if blue_votes > red_votes:
         winner_color = 'blue'
-        winner = ring.speaker.get_full_name()
+        if ring.rule == 'public':
+            winner = _(u'Blue side is winning! Majority of users see the statement to be true.')
+        else:
+            winner = ring.blue.all()[:1].get_full_name()
     elif blue_votes < red_votes:
         winner_color = 'red'
-        winner = ring.speaker.get_full_name()
+        if ring.rule == 'public':
+            winner = _(u'Red side is winning! Majority of users see the statement to be untrue.')
+        else:
+            winner = ring.red.all()[:1].get_full_name()
     elif blue_votes == red_votes and not is_without_opponent:
         winner_color = ''
         winner = _(u'No winner can yet be concluded. The race is on.')
@@ -457,7 +515,7 @@ def filter_discussions(request):
             show_open_topics = form.cleaned_data['show_open_topics']
             category = form.cleaned_data['category']            
             if show_open_topics:
-                rings_queryset = Ring.objects.filter(category=category).filter(blue=None)
+                rings_queryset = Ring.objects.filter(category=category).filter(rule='public')
             else:
                 rings_queryset = Ring.objects.filter(category=category)
     else:

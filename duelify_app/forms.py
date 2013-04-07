@@ -1,5 +1,5 @@
 from duelify_app.models import Ring, DuelInvitation, Punch, Category, SIDES,\
-    RULES
+    RULES, SIDES_C
 from django import forms
 from django.forms.forms import Form
 import re
@@ -79,6 +79,9 @@ class PunchForm(forms.ModelForm):
         super(PunchForm, self).__init__(*args, **kwargs)        
         self.fields['discussion'].widget.attrs['placeholder'] = _(u'Express your opinion according to given topic')
         self.fields['side'].widget.attrs['class'] = 'big-input'
+        if self.instance.side:
+            self.fields['side'].required = False
+        #self.fields['side'].widget.empty_label = None         
         
         if is_new:
             self.fields['side'].label = _(u'Do you agree or disagree with your topic?')
@@ -90,6 +93,7 @@ class PunchForm(forms.ModelForm):
         model = Punch
         widgets = {
                 'discussion': forms.Textarea(  attrs={'class': 'discussion placeholder_fix_css', 'autocomplete': 'off'}),
+                
              }
 
 #class FriendsInviteForm(forms.ModelForm):

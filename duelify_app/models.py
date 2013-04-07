@@ -14,7 +14,7 @@ from django.core.exceptions import ValidationError
 
 def validate_min_100(value):
     if value.__len__()  < 100:
-        raise ValidationError(u'Only %s characterss? - please express your opinion in more than 100 characters' % value.__len__())
+        raise ValidationError(u'Only %s characters? - please express your opinion in more than 100 characters' % value.__len__())
 
 SIDES = (        
             ('blue',        _(u'Agree')),
@@ -58,7 +58,7 @@ class Ring(models.Model):
 class Punch(models.Model):
     ring            = models.ForeignKey(Ring)
     speaker         = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='speaker')
-    side            = models.CharField(max_length=4, choices=SIDES_C, default='blue', verbose_name=_("On which side are you?"))
+    side            = models.CharField(max_length=4, choices=SIDES_C, default='blue', verbose_name=_("On which side are you?"), blank=False)
     discussion      = models.TextField(_(u'Express your opinion'), validators=[validate_min_100])
     datetime        = models.DateTimeField()
     voters          = models.ManyToManyField(settings.AUTH_USER_MODEL, verbose_name= _("Votes"), null=True, blank=True)

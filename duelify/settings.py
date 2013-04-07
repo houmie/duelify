@@ -6,21 +6,25 @@ LOGIN_REDIRECT_URL = '/'
 
 SOCIAL_AUTH_COMPLETE_URL_NAME  = 'socialauth_complete'
 SOCIAL_AUTH_ASSOCIATE_URL_NAME = 'socialauth_associate_complete'
-
+SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/new-users-invited/'
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/login-invited/'
+#SIGNUP_ERROR_URL = '/signup-error/'
 SOCIAL_AUTH_USER_MODEL = 'duelify_app.User'
 
 TWITTER_CONSUMER_KEY         = 'Uw5H6jZzh0Ih6d1q2I64Yg'
 TWITTER_CONSUMER_SECRET      = '4GgcuLpFbHAcxtnhIcdkkGfTAuLubkOLXNjtPRXfMw'
 FACEBOOK_APP_ID  = '437998529622782'
 FACEBOOK_API_SECRET = '517e77586ad6c01ba7b62a76de1cba8f'
-FACEBOOK_EXTENDED_PERMISSIONS = ['email']
+FACEBOOK_EXTENDED_PERMISSIONS = ['email', 'user_birthday', 'user_location']
+FACEBOOK_EXTRA_DATA = [('user_birthday', 'user_location')]
 GOOGLE_OAUTH2_CLIENT_ID = '693177233769.apps.googleusercontent.com'
 GOOGLE_OAUTH2_CLIENT_SECRET = 'Gxf_7quO5tn7gc7l1-s3bCkL'
 SOCIAL_AUTH_REDIRECT_IS_HTTPS = False
+#SOCIAL_AUTH_RAISE_EXCEPTIONS = True
 
 AUTH_USER_MODEL = 'duelify_app.User'
 
-SITE_HOST = '127.0.0.1:8000'
+SITE_HOST = 'duelify.com:8000'
 DEFAULT_FROM_EMAIL = 'houmie@gmail.com'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = '587'
@@ -181,20 +185,20 @@ AUTHENTICATION_BACKENDS = ('social_auth.backends.facebook.FacebookBackend',
                            'social_auth.backends.twitter.TwitterBackend',
                            'django.contrib.auth.backends.ModelBackend',)
 
-TEMPLATE_CONTEXT_PROCESSORS = (
-    "django.contrib.auth.context_processors.auth",
-    "django.core.context_processors.debug",
-    "django.core.context_processors.i18n",
-    "django.core.context_processors.media",
-    "django.core.context_processors.static",
-    "django.core.context_processors.tz",
-    "django.contrib.messages.context_processors.messages",    
-    "django.core.context_processors.request",    
-    'social_auth.context_processors.social_auth_by_name_backends',
-    'social_auth.context_processors.social_auth_backends',
-    'social_auth.context_processors.social_auth_by_type_backends',
-    'social_auth.context_processors.social_auth_login_redirect',
-)
+#TEMPLATE_CONTEXT_PROCESSORS = (
+#    "django.contrib.auth.context_processors.auth",
+#    "django.core.context_processors.debug",
+#    "django.core.context_processors.i18n",
+#    "django.core.context_processors.media",
+#    "django.core.context_processors.static",
+#    "django.core.context_processors.tz",
+#    "django.contrib.messages.context_processors.messages",    
+#    "django.core.context_processors.request",    
+#    'social_auth.context_processors.social_auth_by_name_backends',
+#    'social_auth.context_processors.social_auth_backends',
+#    'social_auth.context_processors.social_auth_by_type_backends',
+#    'social_auth.context_processors.social_auth_login_redirect',
+#)
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
@@ -208,6 +212,18 @@ MIDDLEWARE_CLASSES = (
     # Uncomment the next line for simple clickjacking protection:
     #'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
+
+SOCIAL_AUTH_PIPELINE = (
+    'social_auth.backends.pipeline.social.social_auth_user',
+    'social_auth.backends.pipeline.associate.associate_by_email',
+    'social_auth.backends.pipeline.user.get_username',
+    'social_auth.backends.pipeline.user.create_user',
+    'social_auth.backends.pipeline.social.associate_user',
+    'social_auth.backends.pipeline.social.load_extra_data',
+    'social_auth.backends.pipeline.user.update_user_details',
+
+    #'site.duelify.utils.facebook_save',
+) 
 
 ROOT_URLCONF = 'duelify.urls'
 
