@@ -143,7 +143,7 @@ def logout_page(request):
     logout(request)
     return HttpResponseRedirect('/')
 
-#HttpResponseRedirect(reverse('socialauth_begin', args=('facebook',)))
+
 
 def friends_accept(request, code):
     invitation = get_object_or_404(DuelInvitation, code__exact=code)
@@ -155,10 +155,15 @@ def login_invited(request):
     if 'invitation' in request.session:
         invitation = DuelInvitation.objects.get(id=request.session['invitation'])  
         if invitation.ring.rule == 'personal':
-            if invitation.ring.punch_set.all()[:1].get().side == 'red':
-                invitation.ring.blue.add(request.user)
+            if invitation.email == request.user.email:
+                if invitation.ring.punch_set.all()[:1].get().side == 'red':
+                    invitation.ring.blue.add(request.user)
+                else:
+                    invitation.ring.red.add(request.user)
             else:
-                invitation.ring.red.add(request.user)
+                messages.error(request, _(u'%(inviter) had send an invitation to the email address %(email), but you used an account with a different email address to login.') % {'inviter':invitation.sender, 'email' : invitation.email})
+                messages.warning(request, _(u'Please logout and pick an account with the given email address: %(email)') % {'email' : invitation.email})
+                return HttpResponseRedirect('/')
         # Delete the invitation from the database and session.
         punch_id = invitation.ring.pk
         invitation.delete()
@@ -167,24 +172,7 @@ def login_invited(request):
     else:
         return HttpResponseRedirect('/')
 
-def new_users_invited(request):
-    #request.user.date_of_birth = request.user.social_auth.get(provider='facebook').extra_data['birthday']
-    if 'invitation' in request.session:
-        invitation = DuelInvitation.objects.get(id=request.session['invitation'])  
-        if invitation.ring.rule == 'personal':
-            if invitation.ring.punch_set.all()[:1].get().side == 'red':
-                invitation.ring.blue.add(request.user)
-            else:
-                invitation.ring.red.add(request.user)
-        # Delete the invitation from the database and session.
-        punch_id = invitation.ring.pk
-        invitation.delete()
-        del request.session['invitation']
-        new_user_annoucement(request.user)          
-        return HttpResponseRedirect(reverse('discuss-topic', args=str(punch_id)))
-    else:
-        return HttpResponseRedirect('/')
-        
+      
 
 def register_page(request):    
     if 'invitation' in request.session:
@@ -348,9 +336,9 @@ def topics_discuss(request, ring_id):
         is_vote_only = True
     
     if request.method == 'POST':  
-        punch_form_post = PunchForm(request.POST)
-        if punch_form_post.is_valid():
-            punch = punch_form_post.save(commit=False)
+        punch_form = PunchForm(request.POST)
+        if punch_form.is_valid():
+            punch = punch_form.save(commit=False)
             punch.ring = ring         
             
             if punch.side == 'red' and not ring.red.filter(pk=request.user.pk).exists():
@@ -407,13 +395,13 @@ def topics_discuss(request, ring_id):
         if ring.rule == 'public':
             winner = _(u'Blue side is winning! Majority of users see the statement to be true.')
         else:
-            winner = ring.blue.all()[:1].get_full_name()
+            winner = ring.blue.all()[:1].get().get_full_name()
     elif blue_votes < red_votes:
         winner_color = 'red'
         if ring.rule == 'public':
             winner = _(u'Red side is winning! Majority of users see the statement to be untrue.')
         else:
-            winner = ring.red.all()[:1].get_full_name()
+            winner = ring.red.all()[:1].get().get_full_name()
     elif blue_votes == red_votes and not is_without_opponent:
         winner_color = ''
         winner = _(u'No winner can yet be concluded. The race is on.')

@@ -10,6 +10,7 @@ from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.utils import timezone
 from django.core.exceptions import ValidationError
+import datetime
 
 
 def validate_min_100(value):
@@ -64,10 +65,6 @@ class Punch(models.Model):
     voters          = models.ManyToManyField(settings.AUTH_USER_MODEL, verbose_name= _("Votes"), null=True, blank=True)
     
     def save(self, *args, **kwargs):    
-#        if self.ring.red.filter(red_users=self.speaker).exists():
-#            self.side = 'red'
-#        else:
-#            self.side = 'blue'
         super(Punch, self).save(*args, **kwargs) # Call the "real" save() method.
     
     def get_votes(self):
@@ -80,22 +77,6 @@ class Punch(models.Model):
         verbose_name_plural = _(u'Punches')
 
 
-#class FriendInvitation(models.Model):
-#    name = models.CharField(max_length=50)
-#    email = models.EmailField()
-#    code = models.CharField(max_length=20)
-#    sender = models.ForeignKey(User)    
-#    
-#    def __unicode__(self):
-#        return u'%s, %s' % (self.sender.username, self.email)    
-#
-#    def send(self):
-#        subject = u'Invitation to duel your friends and foes ~ Duelify'
-#        link = 'http://%s/friend/accept/%s/' % (settings.SITE_HOST, self.code)
-#        template = get_template('registration/invitation_email.txt')
-#        context = Context({'name': self.name, 'link': link, 'sender': self.sender.username, })
-#        message = template.render(context)
-#        send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [self.email])  
 
 class DuelInvitation(models.Model):    
     email = models.EmailField()
@@ -135,7 +116,7 @@ class MyUserManager(BaseUserManager):
 
         user = self.model(
             email=MyUserManager.normalize_email(email),
-            date_of_birth=date_of_birth or timezone.now(),
+            date_of_birth=date_of_birth or datetime.datetime(2100, 1, 1, 1, 1, 1),
             first_name=first_name or '',
             last_name=last_name or ''
         )

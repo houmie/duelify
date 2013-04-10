@@ -46,7 +46,7 @@ class ChooseCategoryForm(Form):
         super(ChooseCategoryForm, self).__init__(*args, **kwargs)        
         self.fields['category'].queryset = Category.objects.all()
         self.fields['category'].required = False 
-    category = forms.ModelChoiceField(queryset='', label=_(u'Pick a category'))
+    category = forms.ModelChoiceField(queryset='', label=_(u'Pick a category'), initial=0)
     show_open_topics = forms.BooleanField(label=_(u'Show Only Open Topics'), required=False)
 
 class CategoryForm(forms.ModelForm):
