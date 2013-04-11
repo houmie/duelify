@@ -3,15 +3,13 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView,\
     FormView
 from django.views.generic import TemplateView
 from duelify_app.forms import RingForm, RegistrationForm, PunchForm,\
-    CategoryForm, ChooseCategoryForm, FeedbackForm, AjaxLoginForm
+    ChooseCategoryForm, FeedbackForm, AjaxLoginForm
 from duelify_app.models import Ring, DuelInvitation, Punch, Category
 from django.contrib.auth.decorators import login_required
-from django.core.context_processors import request
 from django.http.response import HttpResponseRedirect, Http404, HttpResponse
 from django.contrib.auth import logout, authenticate, get_user_model, login, REDIRECT_FIELD_NAME
 from django.contrib.auth.views import login as loginview
 from duelify import settings
-from django.contrib.auth.models import User
 from django.shortcuts import render, get_object_or_404, resolve_url
 from django.contrib import messages
 from django.template.loader import get_template
@@ -22,9 +20,6 @@ from django.template.loader_tags import register
 from django.utils import timezone
 from django.utils.translation import ugettext as _, ungettext
 from django.core.urlresolvers import reverse_lazy, reverse
-from django.views.generic.list import ListView
-from django.views.generic.detail import DetailView
-from django import template
 from django.db.models.query_utils import Q
 from django.utils.http import is_safe_url
 from django.contrib.sites.models import get_current_site
@@ -33,6 +28,7 @@ from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.cache import never_cache
 import json
 from django.template.response import TemplateResponse
+from duelify_app.utils import get_user_location_details, get_user_browser
 
 
 
@@ -194,10 +190,12 @@ def register_page(request):
         else:
             form = RegistrationForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            
-            #user_location = get_user_location_details(request)
-            #browser_type = get_user_browser(request)
+            user = form.save(commit=False)
+            user_location = get_user_location_details(request)
+            browser_type = get_user_browser(request)
+            user.location = user_location.country
+            user.browser = browser_type
+            user.save()
             
             if 'invitation' in request.session:
                 # Retrieve the invitation object.                

@@ -6,7 +6,7 @@ dbname = "duelifydb"
 conn = MySQLdb.connect('localhost', 'django_user', 'houmie123', dbname, charset='utf8')
 cur = conn.cursor()
 
-cur.execute("INSERT INTO duelify_app_category (category) VALUES ('Entertainment'), ('Sports'), ('Politics'), ('Music'), ('Business'), ('Health');")
+cur.execute("INSERT INTO duelify_app_category (category) VALUES ('Entertainment'), ('Sports'), ('Politics'), ('Music'), ('Movies'), ('Business'), ('Health');")
 
 #for line in f:
 #    cur.execute("INSERT INTO chasebot_app_country (country_code, country_name) VALUES (%s, %s)", (line[:2] , line[3:-1]))                

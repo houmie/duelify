@@ -401,7 +401,7 @@ function datepicker_reload(source, isPast) {
 // }
 
 function personal_invite(event) {
-    "use strict";    
+    "use strict";
     var action = event.data.action;
     $('#collapseOne').collapse(action);
 }
@@ -419,5 +419,8 @@ $(document).ready(function () {
     login('#login');
     $('#id_rule_1').off('click').on('click', {action: 'show'}, personal_invite);
     $('#id_rule_0').off('click').on('click', {action: 'hide'}, personal_invite);
+    if ($('#id_rule_1').is(':checked')) {
+        $('#id_rule_1').click();
+    }
     //$('.discuss_btn').off('click').on('click', discuss_btn_clicked);
 });

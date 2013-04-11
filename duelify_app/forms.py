@@ -59,7 +59,19 @@ class RingForm(forms.ModelForm):
         self.fields['category'].widget.attrs['class'] = 'big-input'
         self.fields['blue_invite'].required = False
             
-    blue_invite = forms.EmailField(label=_(u'Email of your opponent - OR - Leave empty as open topic'), widget= forms.TextInput(attrs={'placeholder': _(u'Invite your friend or foe'), 'class': 'placeholder_fix_css big-input', 'autocomplete': 'off'}))
+    blue_invite = forms.EmailField(label=_(u'Email of your opponent'), widget= forms.TextInput(attrs={'placeholder': _(u'Invite your friend or foe'), 'class': 'placeholder_fix_css big-input', 'autocomplete': 'off'}))
+
+    def clean_blue_invite(self):
+        if 'blue_invite' in self.cleaned_data:
+            blue_invite = self.cleaned_data['blue_invite']
+            rule = self.cleaned_data['rule']
+            if rule == 'personal':
+                if blue_invite:
+                    return blue_invite
+                else:
+                    raise forms.ValidationError(_(u'Enter the email of your opponent'))
+            else:
+                return None
 
     class Meta:
         exclude = {'datetime'}
@@ -105,6 +117,8 @@ class RegistrationForm(UserCreationForm):
         if is_accept_invite:            
             self.fields['email'].initial = email
             self.fields['email'].widget.attrs['readonly'] = True
+            
+
             
 
 

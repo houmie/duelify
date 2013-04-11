@@ -100,7 +100,7 @@ class DuelInvitation(models.Model):
 
 
 class MyUserManager(BaseUserManager):
-    def create_user(self, email, first_name=None, last_name=None, date_of_birth=None, password=None):
+    def create_user(self, email, first_name=None, last_name=None, date_of_birth=None, password=None, location=None, browser=None):
         """
         Creates and saves a User with the given email, date of
         birth and password.
@@ -118,14 +118,16 @@ class MyUserManager(BaseUserManager):
             email=MyUserManager.normalize_email(email),
             date_of_birth=date_of_birth or datetime.datetime(2100, 1, 1, 1, 1, 1),
             first_name=first_name or '',
-            last_name=last_name or ''
+            last_name=last_name or '',
+            location=location or '',
+            browser=browser or ''
         )
 
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, date_of_birth, first_name, last_name, password):
+    def create_superuser(self, email, date_of_birth, first_name, last_name, password, location, browser):
         """
         Creates and saves a superuser with the given email, date of
         birth and password.
@@ -144,7 +146,9 @@ class MyUserManager(BaseUserManager):
             password=password,
             date_of_birth=date_of_birth,
             first_name=first_name,
-            last_name=last_name
+            last_name=last_name,
+            location=location,
+            browser=browser
         )
         user.is_admin = True
         user.save(using=self._db)
@@ -153,13 +157,10 @@ class MyUserManager(BaseUserManager):
 
 class User(AbstractBaseUser):
   
-    email = models.EmailField(
-        verbose_name='email',
-        max_length=255,
-        unique=True,
-        db_index=True,
-    )
-    date_of_birth = models.DateField()
+    email = models.EmailField(verbose_name='email', max_length=255, unique=True, db_index=True,)
+    date_of_birth = models.DateField()    
+    location = models.CharField(max_length=250, blank=True, null=True)
+    browser = models.CharField(max_length=100, blank=True, null=True)
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
     first_name = models.CharField(_('first name'), max_length=30)
@@ -168,8 +169,8 @@ class User(AbstractBaseUser):
     objects = MyUserManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['date_of_birth', 'first_name', 'last_name']
-
+    REQUIRED_FIELDS = ['date_of_birth', 'first_name', 'last_name', 'location', 'browser']
+    
     def get_full_name(self):
         """
         Returns the first_name plus the last_name, with a space in between.

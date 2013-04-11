@@ -15,8 +15,8 @@ SOCIAL_AUTH_USER_MODEL = 'duelify_app.User'
 TWITTER_CONSUMER_KEY         = 'Uw5H6jZzh0Ih6d1q2I64Yg'
 TWITTER_CONSUMER_SECRET      = '4GgcuLpFbHAcxtnhIcdkkGfTAuLubkOLXNjtPRXfMw'
 FACEBOOK_APP_ID  = '437998529622782'
-FACEBOOK_API_SECRET = '517e77586ad6c01ba7b62a76de1cba8f'
-FACEBOOK_EXTENDED_PERMISSIONS = ['email', 'user_birthday']
+FACEBOOK_API_SECRET = '064a52a9b542ce003cefe7425ac4f22f'
+FACEBOOK_EXTENDED_PERMISSIONS = ['email', 'user_birthday', 'user_location']
 #FACEBOOK_EXTRA_DATA = [('user_birthday', 'user_location')]
 GOOGLE_OAUTH2_CLIENT_ID = '693177233769.apps.googleusercontent.com'
 GOOGLE_OAUTH2_CLIENT_SECRET = 'Gxf_7quO5tn7gc7l1-s3bCkL'
@@ -38,6 +38,8 @@ EMAIL_SUBJECT_PREFIX = '[duelify]'
 SESSION_COOKIE_SECURE = False
 CSRF_COOKIE_SECURE = False
 
+GEOIP_PATH = '/home/hooman/venuscloud/duelify-env/site/database/'
+#GEOS_LIBRARY_PATH = '/opt/geos/lib/libgeos_c.so'
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -224,7 +226,7 @@ SOCIAL_AUTH_PIPELINE = (
     'social_auth.backends.pipeline.social.load_extra_data',
     'social_auth.backends.pipeline.user.update_user_details',
 
-    'duelify_app.utils.facebook_save',
+    'duelify_app.utils.social_media_save',
 ) 
 
 ROOT_URLCONF = 'duelify.urls'
