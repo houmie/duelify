@@ -286,7 +286,7 @@ def voteup_discussion(request, punch_id):
         punch.save()
         request.user.score = get_score_for_user(request.user)
         request.user.save()            
-    return HttpResponseRedirect(reverse_lazy('discuss-topic', args=str(punch.ring.pk)))
+    return HttpResponseRedirect(reverse('discuss-topic', args={str(punch.ring.pk), punch.ring.slug}))
     
 
 @login_required()
