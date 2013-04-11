@@ -26,13 +26,13 @@ SOCIAL_AUTH_REDIRECT_IS_HTTPS = False
 AUTH_USER_MODEL = 'duelify_app.User'
 
 SITE_HOST = 'duelify.com:8000'
-DEFAULT_FROM_EMAIL = 'houmie@gmail.com'
+DEFAULT_FROM_EMAIL = 'info@duelify.com'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = '587'
-EMAIL_HOST_USER = 'houmie@gmail.com'
-EMAIL_HOST_PASSWORD = 'M1thra2503GM'
+EMAIL_HOST_USER = 'info@duelify.com'
+EMAIL_HOST_PASSWORD = 'Mehr2503GM'
 EMAIL_USE_TLS = True
-SERVER_EMAIL = 'houmie@gmail.com'
+SERVER_EMAIL = 'info@duelify.com'
 EMAIL_SUBJECT_PREFIX = '[duelify]'
 
 SESSION_COOKIE_SECURE = False

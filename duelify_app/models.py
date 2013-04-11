@@ -47,7 +47,7 @@ class Ring(models.Model):
     red             = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='red_users' , blank=True, null=True)
     blue            = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='blue_users', blank=True, null=True)
     datetime        = models.DateTimeField()
-    rule            = models.CharField(max_length=8, choices=RULES, default='public')
+    rule            = models.CharField(_(u'Who can vote?'), max_length=8, choices=RULES, default='public')
     
     def __unicode__(self):
         return self.topic

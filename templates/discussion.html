@@ -13,12 +13,22 @@
 		<div class="parent">	    	
 			<div class="well well-large">	
 				{% show_row_div_below_error ring_form.topic  %}
-				{% show_row_div_below_error ring_form.category %}	
+				{% show_row_div_below_error ring_form.category %}
 				
-				{% show_row_div_below_error ring_form.blue_invite %}
 				<div class="radio">
 					{% show_row_div_below_error ring_form.rule %}
 				</div>
+				
+				<div class="accordion" id="accordion2">
+					<div class="accordion-group">	
+						<div id="collapseOne" class="accordion-body collapse">
+							<div class="accordion-inner">
+								{% show_row_div_below_error ring_form.blue_invite %}
+							</div>
+						</div>
+					</div>
+				</div>				
+				
 				{% show_row_div_below_error punch_form.side %}
 				{% show_row_div_below_error punch_form.discussion %}										
 				<a id="contact_cancel_btn" href="/" class="btn btn-large cb-float-to-right">{% trans 'Cancel' %}</a> 

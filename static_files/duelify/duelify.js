@@ -400,6 +400,13 @@ function datepicker_reload(source, isPast) {
     // }
 // }
 
+function personal_invite(event) {
+    "use strict";    
+    var action = event.data.action;
+    $('#collapseOne').collapse(action);
+}
+
+
 $(document).ready(function () {
     "use strict";
     // spinning_btn('#registration-button', '#form_registration');
@@ -410,5 +417,7 @@ $(document).ready(function () {
     // $('#invite_menu').on('click').off('click', {menu_id: '#invite_menu'}, activate_menu);
     // $('#home_menu').on('click').off('click', {menu_id: '#home_menu'}, activate_menu);
     login('#login');
+    $('#id_rule_1').off('click').on('click', {action: 'show'}, personal_invite);
+    $('#id_rule_0').off('click').on('click', {action: 'hide'}, personal_invite);
     //$('.discuss_btn').off('click').on('click', discuss_btn_clicked);
 });

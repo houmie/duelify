@@ -56,14 +56,11 @@ class CategoryForm(forms.ModelForm):
 class RingForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(RingForm, self).__init__(*args, **kwargs)        
-#        if self.instance.blue:
-#            self.fields['blue_invite'].initial = self.instance.blue
         self.fields['category'].widget.attrs['class'] = 'big-input'
         self.fields['blue_invite'].required = False
-        #self.fields['pick_side'].widget.attrs['class'] = 'big-input'
             
     blue_invite = forms.EmailField(label=_(u'Email of your opponent - OR - Leave empty as open topic'), widget= forms.TextInput(attrs={'placeholder': _(u'Invite your friend or foe'), 'class': 'placeholder_fix_css big-input', 'autocomplete': 'off'}))
-    #pick_side   = forms.ChoiceField(choices=SIDES, label=_(u'Do you agree or disagree with the topic?'))
+
     class Meta:
         exclude = {'datetime'}
         model = Ring
@@ -75,18 +72,13 @@ class RingForm(forms.ModelForm):
 class PunchForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         is_new = kwargs.pop('is_new', None)
-        #is_continue = kwargs.pop('is_continue', None)
         super(PunchForm, self).__init__(*args, **kwargs)        
         self.fields['discussion'].widget.attrs['placeholder'] = _(u'Express your opinion according to given topic')
         self.fields['side'].widget.attrs['class'] = 'big-input'
         if self.instance.side:
-            self.fields['side'].required = False
-        #self.fields['side'].widget.empty_label = None         
-        
+            self.fields['side'].required = False        
         if is_new:
             self.fields['side'].label = _(u'Do you agree or disagree with your topic?')
-        #if is_continue:
-        #    self.fields['side'].widget.attrs['class'] = 'hidden'
         
     class Meta:
         exclude = {'ring', 'datetime', 'voters', 'speaker'}
@@ -95,43 +87,6 @@ class PunchForm(forms.ModelForm):
                 'discussion': forms.Textarea(  attrs={'class': 'discussion placeholder_fix_css', 'autocomplete': 'off'}),
                 
              }
-
-#class FriendsInviteForm(forms.ModelForm):
-#    def __init__(self, *args, **kwargs):
-#        super(FriendsInviteForm, self).__init__(*args, **kwargs)
-#        self.fields['name'].widget.attrs['class'] = 'demo-input'
-#        self.fields['email'].widget.attrs['class'] = 'demo-input'
-#        self.fields['name'].widget.attrs['autocomplete'] = 'off'
-#        self.fields['email'].widget.attrs['autocomplete'] = 'off'
-#    
-#    def clean_email(self):
-#        email = self.cleaned_data['email']
-#        users = User.objects.filter(email=email)
-#        if users.count() > 0:
-#            raise forms.ValidationError(_(u"This email is already registered in the system, please select another."))
-#        return email
-#    
-#    class Meta:
-#        model = FriendInvitation
-#        fields = {'name', 'email', 'ring'}
-
-
-#class DuelInviteForm(forms.ModelForm):
-#    def __init__(self, *args, **kwargs):
-#        super(DuelInviteForm, self).__init__(*args, **kwargs)        
-#        self.fields['email'].widget.attrs['class'] = 'demo-input'        
-#        self.fields['email'].widget.attrs['autocomplete'] = 'off'
-#    
-##    def clean_email(self):
-##        email = self.cleaned_data['email']
-##        users = User.objects.filter(email=email)
-##        if users.count() > 0:
-##            raise forms.ValidationError(_(u"This email is already registered in the system, please select another."))
-##        return email
-#    
-#    class Meta:
-#        model = DuelInvitation
-#        fields = {'email', 'ring'}
 
 class RegistrationForm(UserCreationForm):
     def __init__(self, *args, **kwargs):        
