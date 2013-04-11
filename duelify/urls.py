@@ -27,7 +27,7 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     url(r'', include('social_auth.urls')),
-    (r'^admin/', include(admin.site.urls)),
+    (r'^peyman/', include(admin.site.urls)),
     url(r'^post$', TemplateView.as_view(template_name="post.html")),
     #url(r'^error$', TemplateView.as_view(template_name="error.html")),
     (r'^side_login/$', side_login),

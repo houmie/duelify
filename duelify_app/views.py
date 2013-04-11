@@ -233,32 +233,6 @@ def new_user_annoucement(user):
     message = template.render(context)
     send_mail('New User Registration', message, settings.DEFAULT_FROM_EMAIL, [settings.DEFAULT_FROM_EMAIL])
 
-#@login_required
-#def friends_invite(request):
-#    if request.method == 'POST':
-#        form = FriendsInviteForm(request.POST)
-#        if form.is_valid():
-#            invitation = DuelInvitation(
-#                                    name=form.cleaned_data['name'],
-#                                    email=form.cleaned_data['email'],
-#                                    code=User.objects.make_random_password(20),
-#                                    sender=request.user,
-#                                    ring=form.cleaned_data['ring']
-#                                    )
-#            invitation.save()
-#            try:
-#                invitation.send()
-#                messages.warning(request, _(u'An invitation was sent to %(name)s.') % {'name' : invitation.email})
-#            except Exception:                
-#                messages.error(request, _(u'An error happened when sending the invitation.'))            
-#            return HttpResponseRedirect('/friends/invite/')
-#    else:
-#        form = FriendsInviteForm()
-#    
-#    variables = {'form': form}
-#    return render(request, 'registration/friends_invite.html', variables)
-
-
 
  
 ITEMS_PER_PAGE = 9

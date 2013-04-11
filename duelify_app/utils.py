@@ -22,8 +22,9 @@ def social_media_save(request, user, social_user, details, response, *args, **kw
         if 'location' in response:
             try: # facebook
                 loc = response.get('location').get('name')
-            except: #twitter
-                loc = response.get('location')
+            except: #twitter location is bad. Could be just a city. 
+                pass
+                #loc = response.get('location')
         if not loc: # Last resort through IP                    
             loc = get_user_location_details(request).country
         user.location = loc
