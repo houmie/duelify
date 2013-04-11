@@ -22,7 +22,7 @@
           {% if ring.punch_set.all %}
           	<p>{{ ring.punch_set.all.0.discussion|slice:":100" }}...</p>
           {% endif %}  
-          <p><a class="btn discuss_btn" href="/topics/discuss/{{ring.pk}}">{% get_button_title ring user %}</a></p>
+          <p><a class="btn discuss_btn" href="/topics/discuss/{{ring.pk}}/{{ring.slug}}">{% get_button_title ring user %}</a></p>
         </div><!--/span-->      
     {% endfor %}      
 </div><!--/row-->
@@ -34,7 +34,7 @@
           {% if ring.punch_set.all %}
           	<p>{{ ring.punch_set.all.0.discussion|slice:":100" }}...</p>
           {% endif %}  
-          <p><a class="btn discuss_btn" href="/topics/discuss/{{ring.pk}}">{% get_button_title ring user %}</a></p>
+          <p><a class="btn discuss_btn" href="/topics/discuss/{{ring.pk}}//{{ring.slug}}">{% get_button_title ring user %}</a></p>
         </div><!--/span-->    
     {% endfor %}        
 </div><!--/row-->

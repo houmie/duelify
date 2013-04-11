@@ -50,7 +50,7 @@ urlpatterns = patterns('',
     #(r'^discussion/edit/(?P<discussion_id>\d+)/$', discussion_add_edit),
     #(r'^discussion/add/', DiscussionAddEdit.as_view()),
     (r'^topics/add/$', discussion_add_edit),
-    url(r'^topics/discuss/(?P<ring_id>\d+)/$', topics_discuss, name='discuss-topic'),
+    url(r'^topics/discuss/(?P<ring_id>\d+)/(?P<slug>[-\w\d]+)/$', topics_discuss, name='discuss-topic'),
     (r'^vote-up/discussion/(?P<punch_id>\d+)/$', voteup_discussion),
     
     #(r'^topics/search/', discussion_search),

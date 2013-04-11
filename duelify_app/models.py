@@ -11,6 +11,8 @@ from django.conf import settings
 from django.utils import timezone
 from django.core.exceptions import ValidationError
 import datetime
+from django.template.defaultfilters import slugify
+
 
 
 def validate_min_100(value):
@@ -44,10 +46,17 @@ class Category(models.Model):
 class Ring(models.Model):
     category        = models.ForeignKey(Category, blank=True, null=True)
     topic           = models.CharField(_(u'Topic'), max_length=30)
+    slug            = models.SlugField()
     red             = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='red_users' , blank=True, null=True)
     blue            = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='blue_users', blank=True, null=True)
     datetime        = models.DateTimeField()
     rule            = models.CharField(_(u'Who can vote?'), max_length=8, choices=RULES, default='public')
+        
+    def save(self, *args, **kwargs):
+        if not self.id:
+            # Newly created object, so set slug
+            self.slug = slugify(self.topic)
+        super(Ring, self).save(*args, **kwargs)
     
     def __unicode__(self):
         return self.topic

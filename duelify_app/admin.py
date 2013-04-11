@@ -8,7 +8,6 @@ from django.contrib.auth.forms import ReadOnlyPasswordHashField
 #from customauth.models import User
 
 
-admin.site.register(Ring)
 admin.site.register(Punch)
 admin.site.register(Category)
 
@@ -88,3 +87,8 @@ admin.site.register(User, MyUserAdmin)
 # ... and, since we're not using Django's builtin permissions,
 # unregister the Group model from admin.
 admin.site.unregister(Group)
+
+
+class RingAdmin(admin.ModelAdmin):
+    prepopulated_fields = {'slug': ('category',)}
+admin.site.register(Ring, RingAdmin)

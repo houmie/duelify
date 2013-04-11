@@ -316,7 +316,7 @@ def voteup_discussion(request, punch_id):
     
 
 @login_required()
-def topics_discuss(request, ring_id):
+def topics_discuss(request, ring_id, slug):
     ring = get_object_or_404(Ring.objects.all(), pk=ring_id)
     punch = Punch(ring = ring)
     punches = ring.punch_set.order_by('datetime')    

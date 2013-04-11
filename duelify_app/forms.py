@@ -74,7 +74,7 @@ class RingForm(forms.ModelForm):
                 return None
 
     class Meta:
-        exclude = {'datetime'}
+        exclude = {'datetime', 'slug'}
         model = Ring
         widgets = {
                 'topic': forms.TextInput(  attrs={'placeholder': _(u'Enter the topic for discussion'), 'class': 'placeholder_fix_css big-input', 'autocomplete': 'off'}),
