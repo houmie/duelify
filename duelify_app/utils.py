@@ -3,25 +3,35 @@ from django.contrib.gis.geoip import GeoIP
 from collections import namedtuple
 
 
-
 def social_media_save(request, user, social_user, details, response, *args, **kwargs):
-    dob = response.get('birthday')  
-    loc = response.get('location')  
+    dob = None
+    loc = None    
+    if not user.date_of_birth:
+        if 'birthday' in response:
+            dob = response.get('birthday')
+    
+    if not user.location:
+        if 'location' in response:
+            loc = response.get('location').get('name')  
+        else:
+            loc = get_user_location_details(request).country
+        user.location = loc
+        
     browser_type = get_user_browser(request)            
+    user.browser = browser_type
             
-    if dob and loc:
-        user.date_of_birth = datetime.strptime(dob, '%m/%d/%Y')
-        user.location = loc.get('name')
-        user.browser = browser_type
-        user.save()       
-    elif dob:
-        user.date_of_birth = datetime.strptime(dob, '%m/%d/%Y')   
-        user.browser = browser_type     
-        user.save()
-    elif loc:        
-        user.location = loc.get('name')
-        user.browser = browser_type
-        user.save()
+    if dob:
+        try:
+            user.date_of_birth = datetime.strptime(dob, '%m/%d/%Y')
+        except:
+            try:
+                #'0000-05-07'
+                user.date_of_birth = datetime.strptime(dob, '%Y-%m-%d')
+            except:
+                pass
+    
+    user.save()       
+    
 
 
 
@@ -37,13 +47,9 @@ def get_user_location_details(request):
     g = GeoIP()
     ip=get_client_ip(request)
     country = ''
-#    city = ''
     
     if ip:
         try:
-#            country = g.city(ip)['country_name']
-#            city = g.city(ip)['city']
-#            if not country: 
             country = g.country(ip)['country_name']
         except TypeError:
             pass

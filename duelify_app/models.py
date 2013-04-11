@@ -125,7 +125,7 @@ class MyUserManager(BaseUserManager):
 
         user = self.model(
             email=MyUserManager.normalize_email(email),
-            date_of_birth=date_of_birth or datetime.datetime(2100, 1, 1, 1, 1, 1),
+            date_of_birth=date_of_birth or None,
             first_name=first_name or '',
             last_name=last_name or '',
             location=location or '',
@@ -136,7 +136,7 @@ class MyUserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, date_of_birth, first_name, last_name, password, location, browser):
+    def create_superuser(self, email, first_name, last_name, password, location=None, browser=None, date_of_birth=None):
         """
         Creates and saves a superuser with the given email, date of
         birth and password.
@@ -167,7 +167,7 @@ class MyUserManager(BaseUserManager):
 class User(AbstractBaseUser):
   
     email = models.EmailField(verbose_name='email', max_length=255, unique=True, db_index=True,)
-    date_of_birth = models.DateField()    
+    date_of_birth = models.DateField(blank=True, null=True)    
     location = models.CharField(max_length=250, blank=True, null=True)
     browser = models.CharField(max_length=100, blank=True, null=True)
     is_active = models.BooleanField(default=True)
@@ -178,7 +178,7 @@ class User(AbstractBaseUser):
     objects = MyUserManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['date_of_birth', 'first_name', 'last_name', 'location', 'browser']
+    REQUIRED_FIELDS = ['first_name', 'last_name']
     
     def get_full_name(self):
         """
