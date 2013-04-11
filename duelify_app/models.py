@@ -45,7 +45,7 @@ class Category(models.Model):
 
 class Ring(models.Model):
     category        = models.ForeignKey(Category, blank=True, null=True)
-    topic           = models.CharField(_(u'Topic'), max_length=30)
+    topic           = models.CharField(_(u'Topic'), max_length=50)
     slug            = models.SlugField()
     red             = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='red_users' , blank=True, null=True)
     blue            = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='blue_users', blank=True, null=True)
