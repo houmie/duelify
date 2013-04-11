@@ -9,28 +9,29 @@ def social_media_save(request, user, social_user, details, response, *args, **kw
     if not user.date_of_birth:
         if 'birthday' in response:
             dob = response.get('birthday')
+            try: # facebook
+                user.date_of_birth = datetime.strptime(dob, '%m/%d/%Y')
+            except:
+                try:
+                    # google
+                    user.date_of_birth = datetime.strptime(dob, '%Y-%m-%d')
+                except:
+                    pass
     
     if not user.location:
         if 'location' in response:
-            loc = response.get('location').get('name')  
-        else:
+            try: # facebook
+                loc = response.get('location').get('name')
+            except: #twitter
+                loc = response.get('location')
+        if not loc: # Last resort through IP                    
             loc = get_user_location_details(request).country
         user.location = loc
         
     browser_type = get_user_browser(request)            
     user.browser = browser_type
-            
-    if dob:
-        try:
-            user.date_of_birth = datetime.strptime(dob, '%m/%d/%Y')
-        except:
-            try:
-                #'0000-05-07'
-                user.date_of_birth = datetime.strptime(dob, '%Y-%m-%d')
-            except:
-                pass
     
-    user.save()       
+    user.save()
     
 
 
