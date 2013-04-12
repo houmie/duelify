@@ -71,7 +71,7 @@ class Punch(models.Model):
     side            = models.CharField(max_length=4, choices=SIDES_C, default='blue', verbose_name=_("On which side are you?"), blank=False)
     discussion      = models.TextField(_(u'Express your opinion'), validators=[validate_min_100])
     datetime        = models.DateTimeField()
-    voters          = models.ManyToManyField(settings.AUTH_USER_MODEL, verbose_name= _("Votes"), null=True, blank=True)
+    voters          = models.ManyToManyField(settings.AUTH_USER_MODEL, verbose_name= _("Voters"), null=True, blank=True)
     
     def save(self, *args, **kwargs):    
         super(Punch, self).save(*args, **kwargs) # Call the "real" save() method.
