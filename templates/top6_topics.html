@@ -2,18 +2,56 @@
 {% load i18n %}
 {% load get_button_title %}
 {% block content %}
-<div class="hero-unit">
-    <!-- <i class="icon-quote-left icon-4x pull-left"></i> -->
-    <h1>{% trans 'Duel your friends &amp; foes'  %} <i class="icon-tint icon-2x pull-right"> </i></h1>
-    <h3>{% trans 'Is there a topic you love to discuss with a friend or foe?' %}</h3>
-	<h3>{% trans 'Simply do it and let the audience vote for who is right!' %}</h3>
-    {% if user.is_authenticated %}
-    	<p class="padding_by_10"><a href="/topics/add/" class="btn btn-success btn-large">{% trans 'Start a topic' %} &raquo;</a><a href="topics/search/" class="btn btn-large margin_to_left">{% trans 'Find a topic' %} &raquo;</a></p>
-    {% else %}
-    	<p class="padding_by_10"><a href="/register/" class="btn btn-primary btn-large">{% trans 'Sign up' %} &raquo;</a><a href="topics/search/" class="btn btn-large margin_to_left">{% trans 'Find a topic' %} &raquo;</a></p>		            	
-    {% endif %}
-                
-</div> 
+<div id="myCarousel" class="carousel slide">
+	<ol class="carousel-indicators">
+		<li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+		<li data-target="#myCarousel" data-slide-to="1"></li>
+		<li data-target="#myCarousel" data-slide-to="3"></li>
+		
+	</ol>
+	<!-- Carousel items -->
+	<div class="carousel-inner">
+		<div class="active item">
+			<div class="hero-unit">			    
+			    <h1>{% trans 'What are you passionate about?'  %} <i class="icon-globe icon-2x pull-right"> </i></h1>
+			    <h3>{% trans 'Is there a topic you love and like to share with the world?' %}</h3>
+				<h3>{% trans 'Simply do it and see if the audience votes for your idea!' %}</h3>
+			    {% if user.is_authenticated %}
+			    	<p class="padding_by_10"><a href="/topics/add/" class="btn btn-success btn-large">{% trans 'Start a topic' %} &raquo;</a><a href="topics/search/" class="btn btn-large margin_to_left">{% trans 'Find a topic' %} &raquo;</a></p>
+			    {% else %}
+			    	<p class="padding_by_10"><a href="/register/" class="btn btn-primary btn-large">{% trans 'Sign up' %} &raquo;</a><a href="topics/search/" class="btn btn-large margin_to_left">{% trans 'Find a topic' %} &raquo;</a></p>		            	
+			    {% endif %}		                
+			</div> 
+		</div>
+		<div class="item">
+			<div class="hero-unit">			    
+			    <h1>{% trans 'Duel your friends &amp; foes'  %} <i class="icon-tint icon-2x pull-right"> </i></h1>
+			    <h3>{% trans 'Is there a topic you love to discuss with a friend or foe?' %}</h3>
+				<h3>{% trans 'Duel them and let the audience vote for who is right!' %}</h3>
+			    {% if user.is_authenticated %}
+			    	<p class="padding_by_10"><a href="/topics/add/" class="btn btn-success btn-large">{% trans 'Start a topic' %} &raquo;</a><a href="topics/search/" class="btn btn-large margin_to_left">{% trans 'Find a topic' %} &raquo;</a></p>
+			    {% else %}
+			    	<p class="padding_by_10"><a href="/register/" class="btn btn-primary btn-large">{% trans 'Sign up' %} &raquo;</a><a href="topics/search/" class="btn btn-large margin_to_left">{% trans 'Find a topic' %} &raquo;</a></p>		            	
+			    {% endif %}		                
+			</div>			 
+		</div>
+		<div class="item">
+			<div class="hero-unit">			    
+			    <h1>{% trans 'Collect points when up-voted'  %} <i class="icon-trophy icon-2x pull-right"> </i></h1>
+			    <h3>{% trans 'Gain honor badges and achievements' %}</h3>
+				<h3>{% trans 'Experience a new platform to exchange ideas about anything' %}</h3>
+			    {% if user.is_authenticated %}
+			    	<p class="padding_by_10"><a href="/topics/add/" class="btn btn-success btn-large">{% trans 'Start a topic' %} &raquo;</a><a href="topics/search/" class="btn btn-large margin_to_left">{% trans 'Find a topic' %} &raquo;</a></p>
+			    {% else %}
+			    	<p class="padding_by_10"><a href="/register/" class="btn btn-primary btn-large">{% trans 'Sign up' %} &raquo;</a><a href="topics/search/" class="btn btn-large margin_to_left">{% trans 'Find a topic' %} &raquo;</a></p>		            	
+			    {% endif %}		                
+			</div>			 
+		</div>		
+	</div>
+	<!-- Carousel nav -->
+	<a class="carousel-control left" href="#myCarousel" data-slide="prev">&lsaquo;</a>
+	<a class="carousel-control right" href="#myCarousel" data-slide="next">&rsaquo;</a>
+</div>
 <div class="row-fluid">
   	{% for ring in top3rings %}
         <div class="span4">

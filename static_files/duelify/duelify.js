@@ -422,5 +422,8 @@ $(document).ready(function () {
     if ($('#id_rule_1').is(':checked')) {
         $('#id_rule_1').click();
     }
+    $('.carousel').carousel({
+        interval: 5000
+    });
     //$('.discuss_btn').off('click').on('click', discuss_btn_clicked);
 });
