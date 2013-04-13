@@ -3,7 +3,7 @@
 <li class="nav-header">{% trans 'Your Discussions' %}</li>
 {% if rings %}
 	{% for ring in rings %}  
-	  <li class="active1"><a href="/topics/discuss/{{ring.pk}}">{{ring}}</a></li>
+	  <li class="active1"><a href="/topics/discuss/{{ring.pk}}/{{ring.slug}}">{{ring}}</a></li>
 	{% endfor %}
 {% else %}
 	<li>{% trans 'No discussion started yet' %}</li>
