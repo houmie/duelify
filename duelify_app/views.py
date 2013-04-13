@@ -104,7 +104,7 @@ def Ajaxlogin(request, template_name='registration/login.html',
 def get_score_for_user(user):    
     score = Ring.objects.filter(punch__voters=user).count() * 2    
     score = score + (Punch.objects.filter(speaker=user).aggregate(voter_count=Count('voters')))['voter_count'] * 5        
-    score = score + Ring.objects.filter(Q(red=user)|Q(blue=user)).count() * 20        
+    score = score + Ring.objects.filter(Q(red=user)|Q(blue=user)).count() * 10        
     return score
 
 
@@ -375,13 +375,13 @@ def topics_discuss(request, ring_id, slug):
     if blue_votes > red_votes:
         winner_color = 'blue'
         if ring.rule == 'public':
-            winner = _(u'Blue side is winning! Majority of users see the statement to be true.')
+            winner = _(u'Blue side is winning!')
         else:
             winner = ring.blue.all()[:1].get().get_full_name()
     elif blue_votes < red_votes:
         winner_color = 'red'
         if ring.rule == 'public':
-            winner = _(u'Red side is winning! Majority of users see the statement to be untrue.')
+            winner = _(u'Red side is winning!')
         else:
             winner = ring.red.all()[:1].get().get_full_name()
     elif blue_votes == red_votes and not is_without_opponent:
