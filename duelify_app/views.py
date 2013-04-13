@@ -5,7 +5,7 @@ from django.views.generic import TemplateView
 from duelify_app.forms import RingForm, RegistrationForm, PunchForm,\
     ChooseCategoryForm, FeedbackForm, AjaxLoginForm
 from duelify_app.models import Ring, DuelInvitation, Punch, Category
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.http.response import HttpResponseRedirect, Http404, HttpResponse
 from django.contrib.auth import logout, authenticate, get_user_model, login, REDIRECT_FIELD_NAME
 from django.contrib.auth.views import login as loginview
@@ -497,6 +497,14 @@ def filter_discussions(request):
     variables = merge_with_additional_variables(request, paginator, page, page_number, variables)
     return render(request, 'filtered_discussions.html', variables)
     
+
+@login_required
+@permission_required('is_superuser')
+def score_reset(request):
+    for user in get_user_model().objects.all():
+        user.score = get_score_for_user(user)
+        user.save()
+    return HttpResponseRedirect('/')
 
 #class TopicFilterDetail(DetailView):
 #    model = Ring
