@@ -157,10 +157,11 @@ def login_invited(request):
                 messages.warning(request, _(u'Please logout and pick an account with the given email address: %(email)') % {'email' : invitation.email})
                 return HttpResponseRedirect('/')
         # Delete the invitation from the database and session.
-        punch_id = invitation.ring.pk
+        ring_id = invitation.ring.pk
+        ring_slug = invitation.ring.slug
         invitation.delete()
         del request.session['invitation']                  
-        return HttpResponseRedirect(reverse('discuss-topic', args=str(punch_id)))
+        return HttpResponseRedirect(reverse('discuss-topic', args={str(ring_id), ring_slug}))
     else:
         return HttpResponseRedirect('/')
 
@@ -172,11 +173,12 @@ def register_page(request):
             users = get_user_model().objects.filter(email=invitation.email)
             if users.count() > 0:
                 user = users[0]
-                punch_id = invitation.ring.pk
+                ring_id = invitation.ring.pk
+                ring_slug = invitation.ring.slug
                 handle_invitation(request, invitation, user)
                 user.backend = 'django.contrib.auth.backends.ModelBackend'
                 login(request, user)
-                return HttpResponseRedirect(reverse('discuss-topic', args=str(punch_id)))
+                return HttpResponseRedirect(reverse('discuss-topic', args={str(ring_id), ring_slug}))
     if request.user.is_authenticated():
         return HttpResponseRedirect('/')
     if request.method == 'POST':
@@ -324,7 +326,7 @@ def topics_discuss(request, ring_id, slug):
             ring.save()
             request.user.score = get_score_for_user(request.user)
             request.user.save()            
-            return HttpResponseRedirect(reverse_lazy('discuss-topic', args=str(punch.ring.pk)))
+            return HttpResponseRedirect(reverse('discuss-topic', args={str(punch.ring.pk), punch.ring.slug}))
     else:
         #Is the user allowed to contribute to this topic?
         if not is_vote_only:            
