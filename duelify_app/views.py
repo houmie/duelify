@@ -102,7 +102,7 @@ def Ajaxlogin(request, template_name='registration/login.html',
     return TemplateResponse(request, template_name, context, current_app=current_app)
 
 def get_score_for_user(user):    
-    score = Ring.objects.filter(punch__voters=user).count() * 2    
+    score = Ring.objects.filter(punch__voters=user).count() * 1    
     score = score + (Punch.objects.filter(speaker=user).aggregate(voter_count=Count('voters')))['voter_count'] * 5        
     score = score + Ring.objects.filter(Q(red=user)|Q(blue=user)).count() * 10        
     return score
@@ -276,9 +276,11 @@ def merge_with_additional_variables(request, paginator, page, page_number, varia
 @login_required()
 def voteup_discussion(request, punch_id):
     punch = get_object_or_404(Punch.objects.all(), pk=punch_id)
-    if punch.speaker != request.user:        
+    if punch.speaker != request.user:     
+        is_upvoted = False   
         if punch.voters.filter(pk=request.user.pk).count() == 0:
             punch.voters.add(request.user)
+            is_upvoted = True
         else:
             punch.voters.remove(request.user)
         punch.save()
@@ -288,7 +290,8 @@ def voteup_discussion(request, punch_id):
         request.user.save()
         internal_link = reverse('discuss-topic', args={str(punch.ring.pk), punch.ring.slug})           
         link = '%s%s' % (settings.SITE_HOST, internal_link) 
-        email_user({'username': punch.speaker, 'link':link, 'first_name':punch.speaker.first_name, 'topic':punch.ring.topic}, 'registration/upvote.txt', _(u'Someone has upvoted your opinion on Duelify!'), [punch.speaker.email])
+        if is_upvoted:
+            email_user({'username': punch.speaker, 'link':link, 'first_name':punch.speaker.first_name, 'topic':punch.ring.topic}, 'registration/upvote.txt', _(u'Someone has upvoted your opinion on Duelify!'), [punch.speaker.email])
     return HttpResponseRedirect(internal_link)
     
 
