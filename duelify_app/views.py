@@ -376,9 +376,9 @@ def topics_discuss(request, ring_id, slug):
         winner_color = ''
         winner = _(u'No winner can yet be concluded. The race is on.')
         winner_sofar = '' 
-    #rings = Ring.objects.filter(Q(red.filter(pk=request.user.pk)|Q(blue.filter(pk=request.user.pk))))    
-    variables = {'punch_form':punch_form, 'template_title': template_title, 'ring':ring, 'punches':punches, 'winner_sofar':winner_sofar,
-                 'winner':winner, 'winner_color':winner_color, 'is_continue':is_continue}
+    rings = Ring.objects.filter(Q(red=request.user)|Q(blue=request.user))    
+    variables = {'punch_form':punch_form, 'template_title': template_title, 'ring':ring, 'punches':punches, 'winner_sofar':winner_sofar, 
+                 'winner':winner, 'winner_color':winner_color, 'is_continue':is_continue, 'rings':rings}
     return render(request, 'discuss_topic.html', variables)
 
 
@@ -436,7 +436,8 @@ def discussion_add_edit(request, discussion_id=None):
     else:
         ring_form = RingForm(instance=ring)
         punch_form = PunchForm(instance=punch, is_new=True)
-    variables = {'ring_form':ring_form, 'punch_form':punch_form, 'template_title': template_title }
+    rings = Ring.objects.filter(Q(red=request.user)|Q(blue=request.user))
+    variables = {'ring_form':ring_form, 'punch_form':punch_form, 'template_title': template_title, 'rings':rings }
     return render(request, 'discussion.html', variables)
 
 
@@ -478,10 +479,11 @@ def filter_discussions(request):
                 rings_queryset = Ring.objects.filter(category=category)
     else:
         form = ChooseCategoryForm()
-    rings, paginator, page, page_number = makePaginator(request, ITEMS_PER_PAGE, rings_queryset)
-    variables = { 'form' : form , 'rings':rings}    
+    rings = Ring.objects.filter(Q(red=request.user)|Q(blue=request.user))
+    all_rings, paginator, page, page_number = makePaginator(request, ITEMS_PER_PAGE, rings_queryset)
+    variables = { 'form' : form , 'rings':rings, 'all_rings':all_rings}    
     variables = merge_with_additional_variables(request, paginator, page, page_number, variables)
-    return render(request, 'category.html', variables)
+    return render(request, 'filtered_discussions.html', variables)
     
 
 #class TopicFilterDetail(DetailView):
