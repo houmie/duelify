@@ -1,0 +1,11 @@
+Hello {{first_name}},
+
+
+Someone has responded to your opinion about "{{topic}}" on Duelify.
+
+Check it out here: {{ link }}
+
+
+
+
+-- Duelify.com

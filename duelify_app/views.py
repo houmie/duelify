@@ -220,16 +220,16 @@ def register_page(request):
         variables = {'form':form, 'is_invited': is_invited }
     return render(request, 'registration/register.html', variables)
 
-def new_user_annoucement(user):
-    template = get_template('registration/welcome.txt')
-    context = Context({'first_name': user.first_name, 'email': user.email})
-    message = template.render(context)    
-    send_mail('Welcome to Duelify', message, settings.DEFAULT_FROM_EMAIL, [user.email])
-    
-    template = get_template('registration/new_signup.txt')            
-    context = Context({'username': user})
+def new_user_annoucement(user):    
+    email_user({'username': user}, 'registration/welcome.txt', 'Welcome to Duelify', [user.email]) 
+    email_user({'username': user}, 'registration/new_signup.txt', 'New User Registration', [settings.DEFAULT_FROM_EMAIL])  
+
+def email_user(variables, template_path, subject, email_to):
+    template = get_template(template_path)            
+    context = Context(variables)
     message = template.render(context)
-    send_mail('New User Registration', message, settings.DEFAULT_FROM_EMAIL, [settings.DEFAULT_FROM_EMAIL])
+    send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, email_to)
+
 
 
  
@@ -283,9 +283,15 @@ def voteup_discussion(request, punch_id):
             punch.voters.remove(request.user)
         punch.save()
         request.user.score = get_score_for_user(request.user)
-        request.user.save()            
-    return HttpResponseRedirect(reverse('discuss-topic', args={str(punch.ring.pk), punch.ring.slug}))
+        punch.speaker.score = get_score_for_user(punch.speaker)
+        punch.speaker.save()
+        request.user.save()
+        internal_link = reverse('discuss-topic', args={str(punch.ring.pk), punch.ring.slug})           
+        link = '%s%s' % (settings.SITE_HOST, internal_link) 
+        email_user({'username': punch.speaker, 'link':link, 'first_name':punch.speaker.first_name, 'topic':punch.ring.topic}, 'registration/upvote.txt', _(u'Someone has upvoted your opinion on Duelify!'), [punch.speaker.email])
+    return HttpResponseRedirect(internal_link)
     
+
 
 @login_required()
 def topics_discuss(request, ring_id, slug):
@@ -326,7 +332,13 @@ def topics_discuss(request, ring_id, slug):
             ring.save()
             request.user.score = get_score_for_user(request.user)
             request.user.save()            
-            return HttpResponseRedirect(reverse('discuss-topic', args={str(punch.ring.pk), punch.ring.slug}))
+            internal_link = reverse('discuss-topic', args={str(punch.ring.pk), punch.ring.slug}) 
+            link = '%s%s' % (settings.SITE_HOST, internal_link)
+            for punch in ring.punch_set.all():
+                if punch.speaker != request.user: 
+                    email_user({'username': punch.speaker, 'link':link, 'first_name':punch.speaker.first_name,
+                         'topic':punch.ring.topic}, 'registration/response.txt', _(u'Someone has responded to your opinion on Duelify!'), [punch.speaker.email])
+            return HttpResponseRedirect(internal_link)
     else:
         #Is the user allowed to contribute to this topic?
         if not is_vote_only:            

@@ -1,0 +1,12 @@
+Hello {{first_name}},
+
+Nice one!
+
+Someone has upvoted your opinion about "{{topic}}" on Duelify.
+
+Checkout your score here: {{ link }}
+
+
+
+
+-- Duelify.com
