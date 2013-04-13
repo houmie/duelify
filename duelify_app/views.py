@@ -29,7 +29,8 @@ from django.views.decorators.cache import never_cache
 import json
 from django.template.response import TemplateResponse
 from duelify_app.utils import get_user_location_details, get_user_browser
-from django.db.models import Count
+from duelify_app.templatetags.get_score_for_user import get_score_for_user
+
 
 
 def handle_invitation(request, invitation, user):
@@ -101,11 +102,7 @@ def Ajaxlogin(request, template_name='registration/login.html',
         context.update(extra_context)
     return TemplateResponse(request, template_name, context, current_app=current_app)
 
-def get_score_for_user(user):    
-    score = Ring.objects.filter(punch__voters=user).count() * 1    
-    score = score + (Punch.objects.filter(speaker=user).aggregate(voter_count=Count('voters')))['voter_count'] * 5        
-    score = score + Ring.objects.filter(Q(red=user)|Q(blue=user)).count() * 10        
-    return score
+
 
 
 def side_login(request):

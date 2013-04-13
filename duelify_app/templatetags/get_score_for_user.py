@@ -1,19 +1,16 @@
 from django import template
 from django.contrib.auth import get_user_model
 from django.db.models.query_utils import Q
-from duelify_app.models import Ring
+from duelify_app.models import Ring, Punch
+from django.db.models import Count
 
 register = template.Library()
 
 @register.simple_tag
-def get_score_for_user(user):
-    score = 0
-    votes = Ring.objects.filter(punch__voters=user)
-    if votes:
-        score = votes.count() * 2
-    rings = Ring.objects.filter(Q(red=user)|Q(blue=user))
-    if rings:
-        score = score + rings.count() * 20
+def get_score_for_user(user):    
+    score = Ring.objects.filter(punch__voters=user).count() * 1    
+    score = score + (Punch.objects.filter(speaker=user).aggregate(voter_count=Count('voters')))['voter_count'] * 5        
+    score = score + Ring.objects.filter(Q(red=user)|Q(blue=user)).count() * 10        
     return score
 
 
