@@ -12,7 +12,7 @@ from django.utils import timezone
 from django.core.exceptions import ValidationError
 import datetime
 from django.template.defaultfilters import slugify
-
+from django.contrib.sitemaps import ping_google
 
 
 def validate_min_100(value):
@@ -57,6 +57,7 @@ class Ring(models.Model):
             # Newly created object, so set slug
             self.slug = slugify(self.topic)
         super(Ring, self).save(*args, **kwargs)
+        
     
     def __unicode__(self):
         return self.topic
@@ -75,6 +76,12 @@ class Punch(models.Model):
     
     def save(self, *args, **kwargs):    
         super(Punch, self).save(*args, **kwargs) # Call the "real" save() method.
+        try:
+            ping_google()
+        except Exception:
+            # Bare 'except' because we could get a variety
+            # of HTTP-related exceptions.
+            pass
     
     def get_votes(self):
         return self.voters.count()

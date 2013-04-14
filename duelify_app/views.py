@@ -30,6 +30,7 @@ import json
 from django.template.response import TemplateResponse
 from duelify_app.utils import get_user_location_details, get_user_browser
 from duelify_app.templatetags.get_score_for_user import get_score_for_user
+from django.contrib.admin.views.decorators import staff_member_required
 
 
 
@@ -314,7 +315,7 @@ def topics_discuss(request, ring_id, slug):
     if request.method == 'POST':  
         punch_form = PunchForm(request.POST)
         if punch_form.is_valid():
-            punch = punch_form.save(commit=False)
+            punch = punch_form.save(commit=False)            
             punch.ring = ring         
             
             if punch.side == 'red' and not ring.red.filter(pk=request.user.pk).exists():
@@ -327,7 +328,7 @@ def topics_discuss(request, ring_id, slug):
                 punch.side = 'blue'
                 
             punch.speaker = request.user
-            punch.datetime = timezone.now()
+            ring.datetime = punch.datetime = timezone.now()            
             punch.save()
             ring.save()
             request.user.score = get_score_for_user(request.user)
@@ -470,11 +471,10 @@ def discussions(request):
     rings = ''
     if not request.user.is_anonymous():
         rings = Ring.objects.filter(Q(red=request.user)|Q(blue=request.user))
-    top3rings = Ring.objects.order_by('-datetime')[0:3]
-    top3_6rings = Ring.objects.order_by('-datetime')[3:6]
+    all_rings = Ring.objects.order_by('-datetime')    
     source = '/rings'
-    variables = { 'top3rings' : top3rings, 'top3_6rings':top3_6rings, 'source' : source, 'rings':rings}    
-    return render(request, 'top6_topics.html', variables)
+    variables = { 'all_rings' : all_rings, 'source' : source, 'rings':rings}    
+    return render(request, 'main.html', variables)
 
 
 
@@ -499,7 +499,7 @@ def filter_discussions(request):
     
 
 @login_required
-@permission_required('is_superuser')
+@staff_member_required
 def score_reset(request):
     for user in get_user_model().objects.all():
         user.score = get_score_for_user(user)

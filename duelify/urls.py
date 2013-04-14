@@ -7,6 +7,7 @@ from duelify_app.views import logout_page, discussions,\
 from django.views.generic.list import ListView
 from duelify_app.models import Ring, Category
 from django.views.generic.base import TemplateView
+from duelify_app.sitemap import Sitemap
 
 
 js_info_dict = {
@@ -16,6 +17,10 @@ js_info_dict = {
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 admin.autodiscover()
+
+sitemaps = {
+    'discussions':Sitemap,
+}
 
 urlpatterns = patterns('',
     # Examples:
@@ -28,6 +33,7 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     url(r'', include('social_auth.urls')),
     (r'^peyman/', include(admin.site.urls)),
+    (r'^sitemap\.xml$', 'django.contrib.sitemaps.views.sitemap', {'sitemaps': sitemaps}),
     url(r'^post$', TemplateView.as_view(template_name="post.html")),
     #url(r'^error$', TemplateView.as_view(template_name="error.html")),
     (r'^side_login/$', side_login),

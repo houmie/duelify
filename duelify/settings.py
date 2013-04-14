@@ -253,6 +253,7 @@ INSTALLED_APPS = (
     'widget_tweaks',
     'pipeline',
     'south',
+    'django.contrib.sitemaps',
     'social_auth',
     'duelify_app',    
     # Uncomment the next line to enable admin documentation:
