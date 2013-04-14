@@ -158,7 +158,7 @@ def login_invited(request):
         ring_slug = invitation.ring.slug
         invitation.delete()
         del request.session['invitation']                  
-        return HttpResponseRedirect(reverse('discuss-topic', args={str(ring_id), ring_slug}))
+        return HttpResponseRedirect(reverse('discuss-topic', kwargs={'ring_id':str(ring_id), 'slug':ring_slug}))
     else:
         return HttpResponseRedirect('/')
 
@@ -175,7 +175,7 @@ def register_page(request):
                 handle_invitation(request, invitation, user)
                 user.backend = 'django.contrib.auth.backends.ModelBackend'
                 login(request, user)
-                return HttpResponseRedirect(reverse('discuss-topic', args={str(ring_id), ring_slug}))
+                return HttpResponseRedirect(reverse('discuss-topic', kwargs={'ring_id':str(ring_id), 'slug':ring_slug}))
     if request.user.is_authenticated():
         return HttpResponseRedirect('/')
     if request.method == 'POST':
@@ -285,7 +285,7 @@ def voteup_discussion(request, punch_id):
         punch.speaker.score = get_score_for_user(punch.speaker)
         punch.speaker.save()
         request.user.save()
-        internal_link = reverse('discuss-topic', args={str(punch.ring.pk), punch.ring.slug})           
+        internal_link = reverse('discuss-topic', kwargs={'ring_id':str(punch.ring.pk), 'slug':punch.ring.slug})           
         link = '%s%s' % (settings.SITE_HOST, internal_link) 
         if is_upvoted:
             email_user({'username': punch.speaker, 'link':link, 'first_name':punch.speaker.first_name, 'topic':punch.ring.topic}, 'registration/upvote.txt', _(u'Someone has upvoted your opinion on Duelify!'), [punch.speaker.email])
@@ -332,7 +332,7 @@ def topics_discuss(request, ring_id, slug):
             ring.save()
             request.user.score = get_score_for_user(request.user)
             request.user.save()            
-            internal_link = reverse('discuss-topic', args={str(punch.ring.pk), punch.ring.slug}) 
+            internal_link = reverse('discuss-topic', kwargs={'ring_id':str(punch.ring.pk), 'slug':punch.ring.slug}) 
             link = '%s%s' % (settings.SITE_HOST, internal_link)
             for punch in ring.punch_set.all():
                 if punch.speaker != request.user: 
