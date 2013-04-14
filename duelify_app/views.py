@@ -491,7 +491,9 @@ def filter_discussions(request):
                 rings_queryset = Ring.objects.filter(category=category)
     else:
         form = ChooseCategoryForm()
-    rings = Ring.objects.filter(Q(red=request.user)|Q(blue=request.user))
+    rings=''
+    if not request.user.is_anonymous():
+        rings = Ring.objects.filter(Q(red=request.user)|Q(blue=request.user))
     all_rings, paginator, page, page_number = makePaginator(request, ITEMS_PER_PAGE, rings_queryset)
     variables = { 'form' : form , 'rings':rings, 'all_rings':all_rings}    
     variables = merge_with_additional_variables(request, paginator, page, page_number, variables)
