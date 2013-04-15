@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load get_button_title %}
+{% block content %}
+<div class="row-fluid">
+	<div class="padding_by_10">
+      <h3>{% trans 'How does it work?' %}</h2>
+      <p>{% trans "You can only post an opinion and not a question. An opinion is something that can be rejected or approved by others. Duelify is not a classic discussion board where you can just ask questions." %}</p>      
+    </div>  	
+    <div class="padding_by_10">
+      <h3>{% trans 'Which topics are allowed?' %}</h2>
+      <p>{% trans 'Duelify supports free speech, you can speak about anything but pornography. At a later stage we might allow age restricted discussions after validation of your age.' %}</p>      
+    </div>
+    <div class="padding_by_10">
+      <h3>{% trans 'Which topics are not allowed?' %}</h2>
+      <p>{% trans 'Any post that contains advertisement will be deleted. Also posts that contain pornography are currently not allowed.' %}</p>      
+    </div>
+    <div class="padding_by_10">
+      <h3>{% trans 'Why was my post deleted/altered?' %}</h2>
+      <p>{% trans "Your post must have a clear opinion. It can't be just a question. An opinion that can be rejected or approved by others. Duelify is not a classic discussion board." %}</p>      
+    </div>            
+</div>
+{% endblock %}

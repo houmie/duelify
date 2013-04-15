@@ -3,7 +3,7 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from duelify_app.views import logout_page, discussions,\
     discussion_add_edit, register_page, RegisterSuccess, ChooseCategoryView, CategoryCreate, CategoryUpdate, CategoryDelete,\
     filter_discussions, friends_accept, topics_discuss, voteup_discussion,\
-    feedback, side_login, main_login, login_invited, score_reset
+    feedback, side_login, main_login, login_invited, score_reset, faq
 from django.views.generic.list import ListView
 from duelify_app.models import Ring, Category
 from django.views.generic.base import TemplateView
@@ -34,8 +34,7 @@ urlpatterns = patterns('',
     url(r'', include('social_auth.urls')),
     (r'^peyman/', include(admin.site.urls)),
     (r'^sitemap\.xml$', 'django.contrib.sitemaps.views.sitemap', {'sitemaps': sitemaps}),
-    url(r'^post$', TemplateView.as_view(template_name="post.html")),
-    #url(r'^error$', TemplateView.as_view(template_name="error.html")),
+    (r'^faq/$', faq),        
     (r'^side_login/$', side_login),
     (r'^login/$', main_login),
     (r'^logout/$', logout_page),

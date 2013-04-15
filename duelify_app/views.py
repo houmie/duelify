@@ -104,7 +104,12 @@ def Ajaxlogin(request, template_name='registration/login.html',
     return TemplateResponse(request, template_name, context, current_app=current_app)
 
 
-
+def faq(request):
+    rings = ''
+    if not request.user.is_anonymous():
+        rings = Ring.objects.filter(Q(red=request.user)|Q(blue=request.user))    
+    variables = { 'rings':rings}    
+    return render(request, 'faq.html', variables)
 
 def side_login(request):
     if request.user.is_authenticated():
