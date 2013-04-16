@@ -399,16 +399,31 @@ def topics_discuss(request, ring_id, slug):
                  'winner':winner, 'winner_color':winner_color, 'is_continue':is_continue, 'rings':rings}
     return render(request, 'discuss_topic.html', variables)
 
+@login_required()
+def punch_edit(request, punch_id):
+    punch = Punch.objects.get(pk=punch_id)
+    ring = punch.ring
+    template_title = _(u'Edit existing topic')
+    if request.method == 'POST':
+        punch_form = PunchForm(request.POST)
+        if punch_form.is_valid():
+            punch = punch_form.save(commit=False)
+            
+            return HttpResponseRedirect(reverse('discuss-topic', kwargs={'ring_id':str(ring.pk), 'slug':ring.slug}))
+    else:
+        punch_form = PunchForm(instance=punch)
+    variables = {'punch_form':punch_form, 'template_title': template_title }
+    return render(request, 'discussion.html', variables)
 
 @login_required()
-def discussion_add_edit(request, discussion_id=None):       
-    if discussion_id is None:
+def discussion_add_edit(request, ring_id=None, slug=None):       
+    if ring_id is None:
         ring = Ring(category = Category.objects.get(pk=1), datetime=timezone.now())
         punch = Punch(ring=ring)
-        template_title = _(u'Start a new topic')        
+        template_title = _(u'Start a new topic')
     else:        
-        ring = get_object_or_404(Ring.objects.all(), pk=discussion_id)
-        punch = punch(ring=ring)
+        ring = get_object_or_404(Ring.objects.all(), pk=ring_id)
+        punch = Punch(ring=ring)
         template_title = _(u'Edit existing topic')        
     if request.method == 'POST':        
         ring_form = RingForm(request.POST)        
@@ -419,7 +434,7 @@ def discussion_add_edit(request, discussion_id=None):
             
             datetime = timezone.now()
             ring.datetime = datetime
-            #pick_side = ring_form.cleaned_data["pick_side"]
+            
             ring.save()
             if punch.side == 'red':
                 ring.red.add(request.user)                   
@@ -450,7 +465,7 @@ def discussion_add_edit(request, discussion_id=None):
             #log_contact(request, contact, 'contact_add_edit', secondary, profile, is_edit)
             else:
                 messages.warning(request, _(u'Your open topic has been started. Lets wait and see if someone bites...'))            
-            return HttpResponseRedirect('/')
+            return HttpResponseRedirect(reverse('discuss-topic', kwargs={'ring_id':str(ring.pk), 'slug':ring.slug}))
     else:
         ring_form = RingForm(instance=ring)
         punch_form = PunchForm(instance=punch, is_new=True)
