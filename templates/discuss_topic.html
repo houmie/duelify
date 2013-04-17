@@ -15,11 +15,11 @@
 				<h5>{% trans 'Category:' %} {{ring.category}}</h5>
 				<h4>{{winner_sofar}} <span class="well-{{winner_color}}">{{winner}}</span></h4>				
 				{% for punch in punches %}
-					<div class="row">
+					<div class="row punch-row">
 						{% if punch.side = 'blue' %}						
 							<div class="block_inline cb-float-to-left">
 								{{punch.speaker.get_full_name}}
-								<a class="btn btn-link cb-float-to-right" href='/discussion/edit/{{punch.pk}}/'>{% trans 'Edit' %}</a>
+								<a class="btn btn-link cb-float-to-right punch-edit" href='/discussion/edit/{{punch.pk}}/'>{% trans 'Edit' %}</a>
 								<div class="well well-blue well-large">
 									<p>{{punch.discussion}}</p>
 								</div>

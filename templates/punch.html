@@ -1,39 +1,13 @@
 {% load widget_tweaks %}
 {% load i18n %}
-<div class="row">
-	{% if punch.side = 'blue' %}						
-		<div class="block_inline cb-float-to-left">
-			{{punch.speaker.get_full_name}}
-			<a class="btn btn-link cb-float-to-right" href='/discussion/edit/{{punch.pk}}/'>{% trans 'Edit' %}</a>
-			<div class="well well-blue well-large">
-				<p>{{punch.discussion}}</p>
-			</div>
-		</div>
-		
-		<div class="block_inline cb-float-to-left">
-			{% if punch.speaker != user %}
-				<a class="btn {% get_votes_for_punch punch user %}" href="/vote-up/discussion/{{punch.pk}}"><i class="icon-thumbs-up icon-large"/></i></a>
-			{% endif %}
-			
-			{% trans 'Votes' %}: {{punch.get_votes}}
-		</div>							
-	{% endif %}
-
-	{% if punch.side = 'red' %}
-		<div class="block_inline cb-float-to-right">
-			{{punch.speaker.get_full_name}}
-			<div class="well well-red well-large">
-				<p>{{punch.discussion}}</p>
-			</div>
-		</div>
-		
-		<div class="block_inline cb-float-to-right">
-			{% if punch.speaker != user %}
-				<a class="btn {% get_votes_for_punch punch user %}" href="/vote-up/discussion/{{punch.pk}}"><i class="icon-thumbs-up icon-large"/></i></a>
-			{% endif %}
-			
-			{% trans 'Votes' %}: {{punch.get_votes}}
-		</div>
-		
-	{% endif %}
+<div>
+	<form class="{% if punch.side = 'red' %}cb-float-to-right{% else %}cb-float-to-left{% endif %}"  id="save_add_form" method="post" action=".">
+		{% csrf_token %}
+		{% if not is_continue %}
+			{% show_row_div_below_error punch_form.side  %}
+		{% endif %}
+		{% show_row_div_below_error punch_form.discussion  %}			
+		<a id="contact_cancel_btn" href="/" class="btn btn-large cb-float-to-right">{% trans 'Cancel' %}</a> 
+		<button type="submit" id="add_topic" autocomplete="off" class="btn btn-primary btn-large cb-float-to-right">{% trans 'Add Your Opinion' %}</button>
+	</form>
 </div>

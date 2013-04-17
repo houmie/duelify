@@ -413,7 +413,7 @@ def punch_edit(request, punch_id):
     else:
         punch_form = PunchForm(instance=punch)
     variables = {'punch_form':punch_form, 'template_title': template_title }
-    return render(request, 'discussion.html', variables)
+    return render(request, 'punch.html', variables)
 
 @login_required()
 def discussion_add_edit(request, ring_id=None, slug=None):       

@@ -406,6 +406,12 @@ function personal_invite(event) {
     $('#collapseOne').collapse(action);
 }
 
+function punch_edit(event) {
+    "use strict";
+    event.preventDefault();
+    var url = event.target
+    $('.punch-row').load('')
+}
 
 $(document).ready(function () {
     "use strict";
@@ -425,5 +431,6 @@ $(document).ready(function () {
     $('.carousel').carousel({
         interval: 5000
     });
+    $('.punch-edit').off('click').on('click', punch_edit);
     //$('.discuss_btn').off('click').on('click', discuss_btn_clicked);
 });
