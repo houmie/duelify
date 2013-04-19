@@ -1,5 +1,8 @@
+{% extends "base.html" %}
 {% load widget_tweaks %}
 {% load i18n %}
+{% block content %}
+<h3>{{template_title}}</h3>
 <div>
 	<form class="{% if punch.side = 'red' %}cb-float-to-right{% else %}cb-float-to-left{% endif %}"  id="save_add_form" method="post" action=".">
 		{% csrf_token %}
@@ -7,7 +10,8 @@
 			{% show_row_div_below_error punch_form.side  %}
 		{% endif %}
 		{% show_row_div_below_error punch_form.discussion  %}			
-		<a id="contact_cancel_btn" href="/" class="btn btn-large cb-float-to-right">{% trans 'Cancel' %}</a> 
-		<button type="submit" id="add_topic" autocomplete="off" class="btn btn-primary btn-large cb-float-to-right">{% trans 'Add Your Opinion' %}</button>
+		<a id="contact_cancel_btn" href="{{reverse}}" class="btn btn-large cb-float-to-right">{% trans 'Cancel' %}</a> 
+		<button type="submit" id="add_topic" autocomplete="off" class="btn btn-primary btn-large cb-float-to-right">{% trans 'Save' %}</button>
 	</form>
 </div>
+{% endblock %}

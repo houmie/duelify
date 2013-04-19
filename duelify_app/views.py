@@ -6,7 +6,8 @@ from duelify_app.forms import RingForm, RegistrationForm, PunchForm,\
     ChooseCategoryForm, FeedbackForm, AjaxLoginForm
 from duelify_app.models import Ring, DuelInvitation, Punch, Category
 from django.contrib.auth.decorators import login_required, permission_required
-from django.http.response import HttpResponseRedirect, Http404, HttpResponse
+from django.http.response import HttpResponseRedirect, Http404, HttpResponse,\
+    HttpResponseForbidden
 from django.contrib.auth import logout, authenticate, get_user_model, login, REDIRECT_FIELD_NAME
 from django.contrib.auth.views import login as loginview
 from duelify import settings
@@ -298,7 +299,22 @@ def voteup_discussion(request, punch_id):
     return HttpResponseRedirect(internal_link)
     
 
-
+@login_required()
+def save_punch(request, ring, punch):
+    punch.ring = ring
+    if punch.side == 'red' and not ring.red.filter(pk=request.user.pk).exists():
+        ring.red.add(request.user)
+    elif punch.side == 'blue' and not ring.blue.filter(pk=request.user.pk).exists():
+        ring.blue.add(request.user)
+    elif not punch.side and ring.red.filter(pk=request.user.pk).exists():
+        punch.side = 'red'
+    elif not punch.side and ring.blue.filter(pk=request.user.pk).exists():
+        punch.side = 'blue'
+    punch.speaker = request.user
+    ring.datetime = punch.datetime = timezone.now()
+    punch.save()
+    ring.save()
+    
 @login_required()
 def topics_discuss(request, ring_id, slug):
     ring = get_object_or_404(Ring.objects.all(), pk=ring_id)
@@ -321,21 +337,7 @@ def topics_discuss(request, ring_id, slug):
         punch_form = PunchForm(request.POST)
         if punch_form.is_valid():
             punch = punch_form.save(commit=False)            
-            punch.ring = ring         
-            
-            if punch.side == 'red' and not ring.red.filter(pk=request.user.pk).exists():
-                ring.red.add(request.user)
-            elif punch.side == 'blue' and not ring.blue.filter(pk=request.user.pk).exists():
-                ring.blue.add(request.user)
-            elif not punch.side and ring.red.filter(pk=request.user.pk).exists():
-                punch.side = 'red'
-            elif not punch.side and ring.blue.filter(pk=request.user.pk).exists():
-                punch.side = 'blue'
-                
-            punch.speaker = request.user
-            ring.datetime = punch.datetime = timezone.now()            
-            punch.save()
-            ring.save()
+            save_punch(request, ring, punch)
             request.user.score = get_score_for_user(request.user)
             request.user.save()            
             internal_link = reverse('discuss-topic', kwargs={'ring_id':str(punch.ring.pk), 'slug':punch.ring.slug}) 
@@ -402,17 +404,19 @@ def topics_discuss(request, ring_id, slug):
 @login_required()
 def punch_edit(request, punch_id):
     punch = Punch.objects.get(pk=punch_id)
+    if punch.speaker != request.user:
+        return HttpResponseForbidden()
     ring = punch.ring
-    template_title = _(u'Edit existing topic')
+    template_title = _(u'Edit your opinion')
     if request.method == 'POST':
-        punch_form = PunchForm(request.POST)
+        punch_form = PunchForm(request.POST, instance=punch)
         if punch_form.is_valid():
             punch = punch_form.save(commit=False)
-            
+            save_punch(request, ring, punch)
             return HttpResponseRedirect(reverse('discuss-topic', kwargs={'ring_id':str(ring.pk), 'slug':ring.slug}))
     else:
         punch_form = PunchForm(instance=punch)
-    variables = {'punch_form':punch_form, 'template_title': template_title }
+    variables = {'punch_form':punch_form, 'template_title': template_title, 'reverse':reverse('discuss-topic', kwargs={'ring_id':str(ring.pk), 'slug':ring.slug})}
     return render(request, 'punch.html', variables)
 
 @login_required()

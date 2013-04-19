@@ -15,11 +15,13 @@
 				<h5>{% trans 'Category:' %} {{ring.category}}</h5>
 				<h4>{{winner_sofar}} <span class="well-{{winner_color}}">{{winner}}</span></h4>				
 				{% for punch in punches %}
-					<div class="row punch-row">
+					<div class="row">
 						{% if punch.side = 'blue' %}						
 							<div class="block_inline cb-float-to-left">
 								{{punch.speaker.get_full_name}}
-								<a class="btn btn-link cb-float-to-right punch-edit" href='/discussion/edit/{{punch.pk}}/'>{% trans 'Edit' %}</a>
+								{% if punch.speaker == user %}
+									<a class="btn btn-link cb-float-to-right punch-edit" href='/discussion/edit/{{punch.pk}}/'>{% trans 'Edit' %}</a>
+								{% endif %}
 								<div class="well well-blue well-large">
 									<p>{{punch.discussion}}</p>
 								</div>
@@ -37,6 +39,9 @@
 						{% if punch.side = 'red' %}
 							<div class="block_inline cb-float-to-right">
 								{{punch.speaker.get_full_name}}
+								{% if punch.speaker == user %}
+									<a class="btn btn-link cb-float-to-right punch-edit" href='/discussion/edit/{{punch.pk}}/'>{% trans 'Edit' %}</a>
+								{% endif %}
 								<div class="well well-red well-large">
 									<p>{{punch.discussion}}</p>
 								</div>
