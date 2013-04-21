@@ -23,7 +23,7 @@
 									<a class="btn btn-link cb-float-to-right punch-edit" href='/discussion/edit/{{punch.pk}}/'>{% trans 'Edit' %}</a>
 								{% endif %}
 								<div class="well well-blue well-large">
-									<p>{{punch.discussion}}</p>
+									<p>{{punch.discussion|safe}}</p>
 								</div>
 							</div>
 							
@@ -43,7 +43,7 @@
 									<a class="btn btn-link cb-float-to-right punch-edit" href='/discussion/edit/{{punch.pk}}/'>{% trans 'Edit' %}</a>
 								{% endif %}
 								<div class="well well-red well-large">
-									<p>{{punch.discussion}}</p>
+									<p>{{punch.discussion|safe}}</p>
 								</div>
 							</div>
 							

@@ -46,6 +46,7 @@ urlpatterns = patterns('',
     (r'^feedback/$', feedback),
     (r'^sitemap\.xml$', 'django.contrib.sitemaps.views.sitemap', {'sitemaps': sitemaps}),
     (r'^faq/$', faq),
+    (r'^tinymce/', include('tinymce.urls')),
     
     #Password reset
     (r'^password_reset/$','django.contrib.auth.views.password_reset'),

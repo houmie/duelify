@@ -58,7 +58,7 @@
           <h3>{{ring.topic}}</h2>
           <p>{% trans 'Category' %}: {{ring.category}}</p>
           {% if ring.punch_set.all %}
-          	<p>{{ ring.punch_set.all.0.discussion|slice:":100" }}...</p>
+          	<p>{{ ring.punch_set.all.0.discussion|striptags|slice:":100"|safe }}...</p>
           {% endif %}  
           <p><a class="btn discuss_btn" href="/topics/discuss/{{ring.pk}}/{{ring.slug}}">{% get_button_title ring user %}</a></p>
         </div><!--/span-->    

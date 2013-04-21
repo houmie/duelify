@@ -11,6 +11,7 @@ from django.contrib.auth import get_user_model
 from duelify_app.admin import UserCreationForm
 from django.template.defaultfilters import striptags
 from django.contrib.auth.forms import AuthenticationForm
+from tinymce.widgets import TinyMCE
 
 
 class AjaxBaseForm(forms.BaseForm):
@@ -84,8 +85,7 @@ class RingForm(forms.ModelForm):
 class PunchForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         is_new = kwargs.pop('is_new', None)
-        super(PunchForm, self).__init__(*args, **kwargs)        
-        self.fields['discussion'].widget.attrs['placeholder'] = _(u'Express your opinion according to given topic')
+        super(PunchForm, self).__init__(*args, **kwargs)         
         self.fields['side'].widget.attrs['class'] = 'big-input'
         if self.instance.side:
             self.fields['side'].required = False        
@@ -96,7 +96,7 @@ class PunchForm(forms.ModelForm):
         exclude = {'ring', 'datetime', 'voters', 'speaker'}
         model = Punch
         widgets = {
-                'discussion': forms.Textarea(  attrs={'class': 'discussion placeholder_fix_css', 'autocomplete': 'off'}),
+                'discussion': TinyMCE(  attrs={'cols': 80, 'rows': 30, 'class': 'discussion placeholder_fix_css', 'autocomplete': 'off', 'placeholder':_(u'Express your opinion according to given topic')}),
                 
              }
 

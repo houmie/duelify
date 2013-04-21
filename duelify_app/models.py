@@ -13,6 +13,7 @@ from django.core.exceptions import ValidationError
 import datetime
 from django.template.defaultfilters import slugify
 from django.contrib.sitemaps import ping_google
+from tinymce.models import HTMLField
 
 
 def validate_min_100(value):
@@ -70,7 +71,7 @@ class Punch(models.Model):
     ring            = models.ForeignKey(Ring)
     speaker         = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='speaker')
     side            = models.CharField(max_length=4, choices=SIDES_C, default='blue', verbose_name=_("On which side are you?"), blank=False)
-    discussion      = models.TextField(_(u'Express your opinion'), validators=[validate_min_100])
+    discussion      = HTMLField(_(u'Express your opinion'))#, validators=[validate_min_100])
     datetime        = models.DateTimeField()
     voters          = models.ManyToManyField(settings.AUTH_USER_MODEL, verbose_name= _("Voters"), null=True, blank=True)
     

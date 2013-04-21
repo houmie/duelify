@@ -411,8 +411,8 @@ def punch_edit(request, punch_id):
     if request.method == 'POST':
         punch_form = PunchForm(request.POST, instance=punch)
         if punch_form.is_valid():
-            punch = punch_form.save(commit=False)
-            save_punch(request, ring, punch)
+            punch_updated = punch_form.save(commit=False)
+            save_punch(request, ring, punch_updated)
             return HttpResponseRedirect(reverse('discuss-topic', kwargs={'ring_id':str(ring.pk), 'slug':ring.slug}))
     else:
         punch_form = PunchForm(instance=punch)

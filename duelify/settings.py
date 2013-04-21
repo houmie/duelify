@@ -173,6 +173,54 @@ STATICFILES_FINDERS = (
 #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
+#TINYMCE_JS_URL = STATIC_URL + 'tinymce/js/tinymce/tinymce.min.js'
+#TINYMCE_JS_URL = '/home/hooman/venuscloud/duelify-env/site/static_files/tinymce/js/tinymce/tinymce.min.js' 
+#TINYMCE_JS_ROOT = STATIC_ROOT + 'tinymce/js/tinymce'
+#TINYMCE_JS_ROOT = '/home/hooman/venuscloud/duelify-env/site/static_files/tinymce/js/tinymce'
+TINYMCE_COMPRESSOR = True
+TINYMCE_DEFAULT_CONFIG = {
+    # General options
+    'mode' : "textareas",
+    'theme' : "advanced",
+    'plugins' : "pagebreak,style,layer,table,save,advhr,advimage,advlink,emotions,iespell,inlinepopups,insertdatetime,preview,media,searchreplace,print,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,template,wordcount,advlist,autosave",
+
+#    'plugins': "spellchecker,directionality,paste,searchreplace",
+#    'language': "{{ language }}",
+#    'directionality': "{{ directionality }}",
+#    'spellchecker_languages' : "{{ spellchecker_languages }}",
+#    'spellchecker_rpc_url' : "{{ spellchecker_rpc_url }}",
+    
+    # Theme options
+    'theme_advanced_buttons1' : "bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,fontselect,fontsizeselect,", #fullscreen,code",
+    'theme_advanced_buttons2' : "bullist,numlist,|,outdent,indent,blockquote,|,undo,redo,|,link,unlink,|,forecolor,backcolor",
+    #'theme_advanced_buttons3' : "tablecontrols,|,hr,sub,sup,|,charmap",
+
+    'theme_advanced_toolbar_location' : "top",
+    'theme_advanced_toolbar_align' : "left",
+    'theme_advanced_statusbar_location' : "bottom",
+    'theme_advanced_resizing' : 'true',
+
+    #Example content CSS (should be your site CSS)
+    #content_css : "/css/style.css",
+
+    'template_external_list_url' : "lists/template_list.js",
+    'external_link_list_url' : "lists/link_list.js",
+    'external_image_list_url' : "lists/image_list.js",
+    'media_external_list_url' : "lists/media_list.js",
+
+    # Style formats
+    'style_formats' : [
+        {'title' : 'Bold text', 'inline' : 'strong'},
+        {'title' : 'Red text', 'inline' : 'span', 'styles' : {'color' : '#ff0000'}},
+        {'title' : 'Help', 'inline' : 'strong', 'classes' : 'help'},
+        {'title' : 'Table styles'},
+        {'title' : 'Table row 1', 'selector' : 'tr', 'classes' : 'tablerow'}
+    ],
+
+    'width': '700',
+    'height': '400'
+}
+
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'il8zx-az!ti=e-@m5u&amp;q54q%_%aidnfj05jq4#c8ldax!h3mn2'
 
@@ -251,6 +299,7 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
     'widget_tweaks',
+    'tinymce',
     'pipeline',
     'south',
     'django.contrib.sitemaps',
