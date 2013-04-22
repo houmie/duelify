@@ -311,7 +311,9 @@ def save_punch(request, ring, punch):
     elif not punch.side and ring.blue.filter(pk=request.user.pk).exists():
         punch.side = 'blue'
     punch.speaker = request.user
-    ring.datetime = punch.datetime = timezone.now()
+    ring.datetime = timezone.now()
+    if punch.pk is None:
+        punch.datetime = timezone.now()
     punch.save()
     ring.save()
     
@@ -336,7 +338,11 @@ def topics_discuss(request, ring_id, slug):
     if request.method == 'POST':  
         punch_form = PunchForm(request.POST)
         if punch_form.is_valid():
-            punch = punch_form.save(commit=False)            
+            punch = punch_form.save(commit=False)  
+            if ring.red.filter(pk=request.user.pk).exists():
+                punch.side = 'red'
+            elif ring.blue.filter(pk=request.user.pk).exists():
+                punch.side = 'blue'          
             save_punch(request, ring, punch)
             request.user.score = get_score_for_user(request.user)
             request.user.save()            
@@ -352,7 +358,7 @@ def topics_discuss(request, ring_id, slug):
         if not is_vote_only:            
             if ring.red.filter(pk=request.user.pk).exists():
                 punch.side = 'red'
-            if ring.blue.filter(pk=request.user.pk).exists():
+            elif ring.blue.filter(pk=request.user.pk).exists():
                 punch.side = 'blue'
             punch_form = PunchForm(instance=punch)
     
@@ -415,7 +421,10 @@ def punch_edit(request, punch_id):
             save_punch(request, ring, punch_updated)
             return HttpResponseRedirect(reverse('discuss-topic', kwargs={'ring_id':str(ring.pk), 'slug':ring.slug}))
     else:
-        punch_form = PunchForm(instance=punch)
+        if punch.ring.punch_set.all()[:1].get() == punch:
+            punch_form = PunchForm(instance=punch, is_first=True)
+        else:            
+            punch_form = PunchForm(instance=punch)
     variables = {'punch_form':punch_form, 'template_title': template_title, 'reverse':reverse('discuss-topic', kwargs={'ring_id':str(ring.pk), 'slug':ring.slug})}
     return render(request, 'punch.html', variables)
 
@@ -423,9 +432,9 @@ def punch_edit(request, punch_id):
 def discussion_add_edit(request, ring_id=None, slug=None):       
     if ring_id is None:
         ring = Ring(category = Category.objects.get(pk=1), datetime=timezone.now())
-        punch = Punch(ring=ring)
+        punch = Punch(ring=ring, side='blue')
         template_title = _(u'Start a new topic')
-    else:        
+    else:
         ring = get_object_or_404(Ring.objects.all(), pk=ring_id)
         punch = Punch(ring=ring)
         template_title = _(u'Edit existing topic')        
@@ -444,11 +453,12 @@ def discussion_add_edit(request, ring_id=None, slug=None):
                 ring.red.add(request.user)                   
             else:
                 ring.blue.add(request.user)                
-            ring.save()                        
-            
+            ring.save()      
+            if punch.id is None:                  
+                punch.side='blue'
             punch.ring = ring
             punch.speaker = request.user 
-            punch.datetime = datetime
+            punch.datetime = datetime            
             punch.save()
                         
             request.user.score = get_score_for_user(request.user)
@@ -472,7 +482,7 @@ def discussion_add_edit(request, ring_id=None, slug=None):
             return HttpResponseRedirect(reverse('discuss-topic', kwargs={'ring_id':str(ring.pk), 'slug':ring.slug}))
     else:
         ring_form = RingForm(instance=ring)
-        punch_form = PunchForm(instance=punch, is_new=True)
+        punch_form = PunchForm(instance=punch, is_first=True)
     rings = Ring.objects.filter(Q(red=request.user)|Q(blue=request.user))
     variables = {'ring_form':ring_form, 'punch_form':punch_form, 'template_title': template_title, 'rings':rings }
     return render(request, 'discussion.html', variables)

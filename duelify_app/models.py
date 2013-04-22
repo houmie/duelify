@@ -53,7 +53,7 @@ class Ring(models.Model):
     red             = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='red_users' , blank=True, null=True)
     blue            = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='blue_users', blank=True, null=True)
     datetime        = models.DateTimeField()
-    rule            = models.CharField(_(u'Who can vote?'), max_length=8, choices=RULES, default='public')
+    rule            = models.CharField(_(u'Who can participate?'), max_length=8, choices=RULES, default='public')
         
     def save(self, *args, **kwargs):
         if not self.id:
@@ -81,10 +81,10 @@ class Punch(models.Model):
         super(Punch, self).save(*args, **kwargs) # Call the "real" save() method.
         try:
             ping_google()
-        except Exception:
+        except Exception as ex:
             # Bare 'except' because we could get a variety
             # of HTTP-related exceptions.
-            pass
+            send_mail('ping google failed', ex.message, settings.DEFAULT_FROM_EMAIL, [settings.DEFAULT_FROM_EMAIL])
     
     def get_votes(self):
         return self.voters.count()

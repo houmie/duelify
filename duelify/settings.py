@@ -182,13 +182,15 @@ TINYMCE_DEFAULT_CONFIG = {
     # General options
     'mode' : "textareas",
     'theme' : "advanced",
-    'plugins' : "pagebreak,style,layer,table,save,advhr,advimage,advlink,emotions,iespell,inlinepopups,insertdatetime,preview,media,searchreplace,print,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,template,wordcount,advlist,autosave",
+    'plugins' : "media,pagebreak,style,layer,table,save,advhr,advimage,advlink,emotions,iespell,inlinepopups,insertdatetime,preview,media,searchreplace,print,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,template,wordcount,advlist,autosave",
 
 #    'plugins': "spellchecker,directionality,paste,searchreplace",
 #    'language': "{{ language }}",
 #    'directionality': "{{ directionality }}",
 #    'spellchecker_languages' : "{{ spellchecker_languages }}",
 #    'spellchecker_rpc_url' : "{{ spellchecker_rpc_url }}",
+    'theme_advanced_buttons1_add' : "media",
+    'theme_advanced_buttons2_add' : "advimage",
     
     # Theme options
     'theme_advanced_buttons1' : "bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,fontselect,fontsizeselect,", #fullscreen,code",

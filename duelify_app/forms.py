@@ -84,13 +84,14 @@ class RingForm(forms.ModelForm):
         
 class PunchForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
-        is_new = kwargs.pop('is_new', None)
+        is_first = kwargs.pop('is_first', None)
         super(PunchForm, self).__init__(*args, **kwargs)         
         self.fields['side'].widget.attrs['class'] = 'big-input'
         if self.instance.side:
             self.fields['side'].required = False        
-        if is_new:
-            self.fields['side'].label = _(u'Do you agree or disagree with your topic?')
+        if is_first:
+            if 'side' in self.fields: 
+                del self.fields['side']
         
     class Meta:
         exclude = {'ring', 'datetime', 'voters', 'speaker'}

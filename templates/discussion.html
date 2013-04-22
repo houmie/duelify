@@ -28,8 +28,9 @@
 						</div>
 					</div>
 				</div>				
-				
-				{% show_row_div_below_error punch_form.side %}
+				{% if punch_form.side %}
+					{% show_row_div_below_error punch_form.side %}
+				{% endif %}
 				{% show_row_div_below_error punch_form.discussion %}										
 				<a id="contact_cancel_btn" href="/" class="btn btn-large cb-float-to-right">{% trans 'Cancel' %}</a> 
 				<button type="submit" id="add_topic" autocomplete="off" class="btn btn-primary btn-large cb-float-to-right">{% trans 'Start Discussion' %}</button>			   			
