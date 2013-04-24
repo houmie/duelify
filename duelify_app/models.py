@@ -90,7 +90,7 @@ class Punch(models.Model):
         return self.voters.count()
     
     def __unicode__(self):        
-        return u'%s' % (self.datetime) 
+        return u'%s' % (strip_tags(self.discussion)[slice(0,75)]) 
     class Meta:
         verbose_name = _(u'Punch')
         verbose_name_plural = _(u'Punches')
