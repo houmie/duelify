@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% load get_button_title %}
+{% block meta_title %}Duelify | Duel Your Friends &amp; Foes{% endblock %}
 {% block content %}
 <div id="myCarousel" class="carousel slide">
 	<ol class="carousel-indicators">
@@ -62,7 +63,7 @@
       <h3>{{ring.topic}}</h2>
       <p>{% trans 'Category' %}: {{ring.category}}</p>
       {% if ring.punch_set.all %}
-      	<p>{{ ring.punch_set.all.0.discussion|striptags|slice:":100"|safe }}...</p>
+      	<p>{{ ring.punch_set.all.0.discussion|striptags|slice:":100" }}...</p>
       {% endif %}  
       <p><a class="btn discuss_btn" href="/topics/discuss/{{ring.pk}}/{{ring.slug}}">{% get_button_title ring user %}</a></p>
     </div><!--/span-->
