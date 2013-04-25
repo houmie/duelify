@@ -14,9 +14,9 @@
 	<div class="carousel-inner">
 		<div class="active item">
 			<div class="hero-unit">			    
-			    <h1>{% trans 'What are you passionate about?'  %} <i class="icon-globe icon-2x pull-right"> </i></h1>
-			    <h3>{% trans 'Is there a topic you love and like to share with the world?' %}</h3>
-				<h3>{% trans 'Simply do it and see if the audience votes for your idea!' %}</h3>
+			    <h1>{% trans 'What is your passion?'  %} <i class="icon-globe icon-2x pull-right"> </i></h1>
+			    <h3>{% trans 'Is there a topic you love to share with the world?' %}</h3>
+				<h3>{% trans 'Simply do it and see what the world thinks of your idea!' %}</h3>
 			    {% if user.is_authenticated %}
 			    	<p class="padding_by_10"><a href="/topics/add/" class="btn btn-success btn-large">{% trans 'Start a topic' %} &raquo;</a><a href="topics/search/" class="btn btn-large margin_to_left">{% trans 'Find a topic' %} &raquo;</a></p>
 			    {% else %}
@@ -38,9 +38,9 @@
 		</div>
 		<div class="item">
 			<div class="hero-unit">			    
-			    <h1>{% trans 'Collect points when up-voted'  %} <i class="icon-trophy icon-2x pull-right"> </i></h1>
-			    <h3>{% trans 'Gain honor badges and achievements' %}</h3>
-				<h3>{% trans 'Experience a new platform to exchange ideas about anything' %}</h3>
+			    <h1>{% trans "Collect points when 'liked'"  %} <i class="icon-trophy icon-2x pull-right"> </i></h1>
+			    <h3>{% trans 'Gain honor badges and achievements.' %}</h3>
+				<h3>{% trans 'Experience a new platform to exchange ideas.' %}</h3>
 			    {% if user.is_authenticated %}
 			    	<p class="padding_by_10"><a href="/topics/add/" class="btn btn-success btn-large">{% trans 'Start a topic' %} &raquo;</a><a href="topics/search/" class="btn btn-large margin_to_left">{% trans 'Find a topic' %} &raquo;</a></p>
 			    {% else %}
