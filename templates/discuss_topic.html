@@ -59,8 +59,8 @@
 							
 						{% endif %}
 					</div>
-				{% endfor %}
-				{% if punch_form %}					
+				{% endfor %}				
+				{% if user.is_authenticated and punch_form %}					
 					<form class="{% if punch.side = 'red' %}cb-float-to-right{% else %}cb-float-to-left{% endif %}"  id="save_add_form" method="post" action=".">
 						{% csrf_token %}
 						{% if not is_continue %}

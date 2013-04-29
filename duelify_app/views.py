@@ -317,7 +317,7 @@ def save_punch(request, ring, punch):
     punch.save()
     ring.save()
     
-@login_required()
+
 def topics_discuss(request, ring_id, slug):
     ring = get_object_or_404(Ring.objects.all(), pk=ring_id)
     punch = Punch(ring = ring)
@@ -402,7 +402,9 @@ def topics_discuss(request, ring_id, slug):
         winner_color = ''
         winner = _(u'No winner can yet be concluded. The race is on.')
         winner_sofar = '' 
-    rings = Ring.objects.filter(Q(red=request.user)|Q(blue=request.user))    
+    rings=None
+    if not request.user.is_anonymous():
+        rings = Ring.objects.filter(Q(red=request.user)|Q(blue=request.user))    
     variables = {'punch_form':punch_form, 'template_title': template_title, 'ring':ring, 'punches':punches, 'winner_sofar':winner_sofar, 
                  'winner':winner, 'winner_color':winner_color, 'is_continue':is_continue, 'rings':rings}
     return render(request, 'discuss_topic.html', variables)
