@@ -17,8 +17,8 @@
 			<div class="hero-unit">			    
 			    <h1>{% trans 'Something annoys you?'  %} <i class="icon-globe icon-2x pull-right"> </i></h1>
 			    <h2>{% trans 'Speak out your heart!' %}</h2>
-			    <h3>{% trans 'Let the like-minded come to your aid...' %}</h3>
-				<h3>{% trans '...the audience will vote for which side is right!' %}</h3>
+			    <h3>{% trans 'The like-minded will come to your aid...' %}</h3>
+				<h3>{% trans '...let the audience vote for which side is right!' %}</h3>
 			    {% if user.is_authenticated %}
 			    	<p class="padding_by_10"><a href="/topics/add/" class="btn btn-success btn-large">{% trans 'Start a topic' %} &raquo;</a><a href="topics/search/" class="btn btn-large margin_to_left">{% trans 'Find a topic' %} &raquo;</a></p>
 			    {% else %}
