@@ -7,16 +7,18 @@
 	<ol class="carousel-indicators">
 		<li data-target="#myCarousel" data-slide-to="0" class="active"></li>
 		<li data-target="#myCarousel" data-slide-to="1"></li>
+		<li data-target="#myCarousel" data-slide-to="2"></li>
 		<li data-target="#myCarousel" data-slide-to="3"></li>
 		
 	</ol>
 	<!-- Carousel items -->
-	<div class="carousel-inner">
-		<div class="active item">
+	<div class="carousel-inner">		
+		<div class="item active">
 			<div class="hero-unit">			    
-			    <h1>{% trans 'What is your passion?'  %} <i class="icon-globe icon-2x pull-right"> </i></h1>
-			    <h3>{% trans 'Is there a topic you love to share with the world?' %}</h3>
-				<h3>{% trans 'Simply do it and see what the world thinks of your idea!' %}</h3>
+			    <h1>{% trans 'Something annoys you?'  %} <i class="icon-globe icon-2x pull-right"> </i></h1>
+			    <h2>{% trans 'Speak out your heart!' %}</h2>
+			    <h3>{% trans 'Let the like-minded come to your aid...' %}</h3>
+				<h3>{% trans '...the audience will vote for which side is right!' %}</h3>
 			    {% if user.is_authenticated %}
 			    	<p class="padding_by_10"><a href="/topics/add/" class="btn btn-success btn-large">{% trans 'Start a topic' %} &raquo;</a><a href="topics/search/" class="btn btn-large margin_to_left">{% trans 'Find a topic' %} &raquo;</a></p>
 			    {% else %}
@@ -26,21 +28,9 @@
 		</div>
 		<div class="item">
 			<div class="hero-unit">			    
-			    <h1>{% trans 'Duel your friends &amp; foes'  %} <i class="icon-tint icon-2x pull-right"> </i></h1>
-			    <h3>{% trans 'Is there a topic you love to discuss with a friend or foe?' %}</h3>
-				<h3>{% trans 'Duel them and let the audience vote for who is right!' %}</h3>
-			    {% if user.is_authenticated %}
-			    	<p class="padding_by_10"><a href="/topics/add/" class="btn btn-success btn-large">{% trans 'Start a topic' %} &raquo;</a><a href="topics/search/" class="btn btn-large margin_to_left">{% trans 'Find a topic' %} &raquo;</a></p>
-			    {% else %}
-			    	<p class="padding_by_10"><a href="/register/" class="btn btn-primary btn-large">{% trans 'Sign up' %} &raquo;</a><a href="topics/search/" class="btn btn-large margin_to_left">{% trans 'Find a topic' %} &raquo;</a></p>		            	
-			    {% endif %}		                
-			</div>			 
-		</div>
-		<div class="item">
-			<div class="hero-unit">			    
-			    <h1>{% trans "Collect points when 'liked'"  %} <i class="icon-trophy icon-2x pull-right"> </i></h1>
-			    <h3>{% trans 'Gain honor badges and achievements.' %}</h3>
-				<h3>{% trans 'Experience a new platform to exchange ideas.' %}</h3>
+			    <h1>{% trans 'Endless discussions?'  %} <i class="icon-tint icon-2x pull-right"> </i></h1>
+			    <h2>{% trans 'Duel your friend or foe into a public discussion!'  %}</h2>			    
+				<h3>{% trans '...let the audience vote for who is right!' %}</h3>
 			    {% if user.is_authenticated %}
 			    	<p class="padding_by_10"><a href="/topics/add/" class="btn btn-success btn-large">{% trans 'Start a topic' %} &raquo;</a><a href="topics/search/" class="btn btn-large margin_to_left">{% trans 'Find a topic' %} &raquo;</a></p>
 			    {% else %}
