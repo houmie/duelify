@@ -15,10 +15,9 @@
 	<div class="carousel-inner">		
 		<div class="item active">
 			<div class="hero-unit">			    
-			    <h1>{% trans 'Does something annoy you?'  %} <i class="icon-globe icon-2x pull-right"> </i></h1>
-			    <h2>{% trans 'Speak out your heart!' %}</h2>
-			    <h3>{% trans 'The like-minded will come to your aid...' %}</h3>
-				<h3>{% trans 'And the audience votes for which side is right!' %}</h3>
+			    <h2>{% trans 'A dueling ground to fight out opinions.'  %} <i class="icon-globe icon-2x pull-right"> </i></h2>
+				<h2>{% trans 'And the audience votes for which side is right.' %}</h2>
+				<h3>{% trans 'Start a topic now!' %}</h3>
 			    {% if user.is_authenticated %}
 			    	<p class="padding_by_10"><a href="/topics/add/" class="btn btn-success btn-large">{% trans 'Start a topic' %} &raquo;</a><a href="topics/search/" class="btn btn-large margin_to_left">{% trans 'Find a topic' %} &raquo;</a></p>
 			    {% else %}
