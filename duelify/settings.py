@@ -12,14 +12,14 @@ SIGNUP_ERROR_URL = '/signup-error/'
 LOGIN_ERROR_URL = '/signup-error/'
 SOCIAL_AUTH_USER_MODEL = 'duelify_app.User'
 
-TWITTER_CONSUMER_KEY         = 'Uw5H6jZzh0Ih6d1q2I64Yg'
-TWITTER_CONSUMER_SECRET      = '4GgcuLpFbHAcxtnhIcdkkGfTAuLubkOLXNjtPRXfMw'
-FACEBOOK_APP_ID  = '437998529622782'
-FACEBOOK_API_SECRET = '064a52a9b542ce003cefe7425ac4f22f'
+TWITTER_CONSUMER_KEY         = 'xxxx'
+TWITTER_CONSUMER_SECRET      = 'xxxx'
+FACEBOOK_APP_ID  = 'xxx'
+FACEBOOK_API_SECRET = 'xxxx'
 FACEBOOK_EXTENDED_PERMISSIONS = ['email', 'user_birthday', 'user_location']
 #FACEBOOK_EXTRA_DATA = [('user_birthday', 'user_location')]
-GOOGLE_OAUTH2_CLIENT_ID = '693177233769.apps.googleusercontent.com'
-GOOGLE_OAUTH2_CLIENT_SECRET = 'Gxf_7quO5tn7gc7l1-s3bCkL'
+GOOGLE_OAUTH2_CLIENT_ID = 'xxxx'
+GOOGLE_OAUTH2_CLIENT_SECRET = 'xxxx'
 SOCIAL_AUTH_REDIRECT_IS_HTTPS = False
 #SOCIAL_AUTH_RAISE_EXCEPTIONS = True
 
@@ -30,7 +30,7 @@ DEFAULT_FROM_EMAIL = 'info@duelify.com'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = '587'
 EMAIL_HOST_USER = 'info@duelify.com'
-EMAIL_HOST_PASSWORD = 'Mehr2503GM'
+EMAIL_HOST_PASSWORD = 'xxxxxx'
 EMAIL_USE_TLS = True
 SERVER_EMAIL = 'info@duelify.com'
 EMAIL_SUBJECT_PREFIX = '[duelify]'
@@ -45,7 +45,7 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-     ('Hooman', 'hooman@venuscloud.com'),
+     ('Hooman', 'xxx@xxx.com'),
 )
 
 MANAGERS = ADMINS
